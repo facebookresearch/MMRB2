@@ -16,9 +16,7 @@ from typing import Any, Dict, Optional
 from tqdm import tqdm
 
 SOURCE_NAME = "evalmuse"
-HF_URL = (
-    "https://huggingface.co/datasets/DY-Evalab/EvalMuse/resolve/main/test.json"
-)
+HF_URL = "https://huggingface.co/datasets/DY-Evalab/EvalMuse/resolve/main/test.json"
 
 
 def download(data_dir: str, force: bool = False) -> str:

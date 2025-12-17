@@ -81,9 +81,7 @@ def download(data_dir: str, force: bool = False) -> str:
     config = get_source_config(SOURCE_NAME)
     source_dir = os.path.join(data_dir, SOURCE_NAME)
     repo_dir = os.path.join(source_dir, "chameleon")
-    jsonl_path = os.path.join(
-        repo_dir, "data", "prompts_for_human_evaluations.jsonl"
-    )
+    jsonl_path = os.path.join(repo_dir, "data", "prompts_for_human_evaluations.jsonl")
 
     # Check if already downloaded
     if os.path.exists(jsonl_path) and not force:
@@ -97,7 +95,7 @@ def download(data_dir: str, force: bool = False) -> str:
         if os.path.exists(repo_dir):
             shutil.rmtree(repo_dir)
         print(f"[{SOURCE_NAME}] Cloning repository...")
-        
+
         # If a specific commit is needed, we need to do a full clone
         if "commit" in config:
             subprocess.run(
@@ -123,7 +121,9 @@ def download(data_dir: str, force: bool = False) -> str:
     return source_dir
 
 
-def load_prompts(data_dir: str, required_keys: Optional[Set[str]] = None) -> Dict[str, Dict[str, Any]]:
+def load_prompts(
+    data_dir: str, required_keys: Optional[Set[str]] = None
+) -> Dict[str, Dict[str, Any]]:
     """
     Load prompts from Chameleon.
 
@@ -136,9 +136,7 @@ def load_prompts(data_dir: str, required_keys: Optional[Set[str]] = None) -> Dic
     """
     source_dir = os.path.join(data_dir, SOURCE_NAME)
     repo_dir = os.path.join(source_dir, "chameleon")
-    jsonl_path = os.path.join(
-        repo_dir, "data", "prompts_for_human_evaluations.jsonl"
-    )
+    jsonl_path = os.path.join(repo_dir, "data", "prompts_for_human_evaluations.jsonl")
 
     if not os.path.exists(jsonl_path):
         raise FileNotFoundError(
@@ -191,13 +189,9 @@ def load_prompts(data_dir: str, required_keys: Optional[Set[str]] = None) -> Dic
                     if i < len(parts) - 1 and i < len(image_urls):
                         url = image_urls[i]
                         if url.strip():
-                            filename = get_image_filename(
-                                url, task_type, sample_id
-                            )
+                            filename = get_image_filename(url, task_type, sample_id)
                             abs_path = os.path.join(images_dir, filename)
-                            rel_path = os.path.join(
-                                SOURCE_NAME, "images", filename
-                            )
+                            rel_path = os.path.join(SOURCE_NAME, "images", filename)
 
                             # Try: 1) already exists, 2) download from URL, 3) fallback folder
                             if not os.path.exists(abs_path):
@@ -234,14 +228,13 @@ def load_prompts(data_dir: str, required_keys: Optional[Set[str]] = None) -> Dic
                 }
 
     if copied_from_fallback > 0:
-        print(f"[{SOURCE_NAME}] Copied {copied_from_fallback} images from fallback folder")
-    if failed_downloads > 0:
         print(
-            f"[{SOURCE_NAME}] Warning: {failed_downloads} image downloads failed"
+            f"[{SOURCE_NAME}] Copied {copied_from_fallback} images from fallback folder"
         )
+    if failed_downloads > 0:
+        print(f"[{SOURCE_NAME}] Warning: {failed_downloads} image downloads failed")
     if skipped > 0:
         print(f"[{SOURCE_NAME}] Skipped {skipped} prompts (not in required set)")
 
     print(f"[{SOURCE_NAME}] Loaded {len(prompts)} prompts")
     return prompts
-

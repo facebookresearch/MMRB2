@@ -42,11 +42,7 @@ def download(data_dir: str, force: bool = False) -> str:
     prompts_file = os.path.join(source_dir, "prompts.jsonl")
     images_dir = os.path.join(source_dir, "images")
 
-    if (
-        os.path.exists(prompts_file)
-        and os.path.exists(images_dir)
-        and not force
-    ):
+    if os.path.exists(prompts_file) and os.path.exists(images_dir) and not force:
         print(f"[{SOURCE_NAME}] Already downloaded: {source_dir}")
         return source_dir
 
@@ -103,9 +99,7 @@ def download(data_dir: str, force: bool = False) -> str:
                     timeout=30,
                 )
             except Exception as e:
-                print(
-                    f"[{SOURCE_NAME}] Warning: Failed to download {img_url}: {e}"
-                )
+                print(f"[{SOURCE_NAME}] Warning: Failed to download {img_url}: {e}")
                 continue
 
         prompts.append(

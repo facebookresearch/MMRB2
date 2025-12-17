@@ -16,6 +16,7 @@ Usage:
 """
 
 import argparse
+import gc
 import importlib
 import inspect
 import json
@@ -26,9 +27,7 @@ from sources import SOURCES, get_source_config
 from tqdm import tqdm
 
 
-def download_source(
-    source_name: str, data_dir: str, force: bool = False
-) -> None:
+def download_source(source_name: str, data_dir: str, force: bool = False) -> None:
     """
     Download a single source dataset.
 
@@ -187,22 +186,7 @@ def merge_prompts(
         lookup_key = get_lookup_key(source, pair["prompt_metadata"])
         required_keys_by_source[source].add(lookup_key)
 
-    # Load prompts for each source
-    source_prompts = {}
-    for source in sources_to_process:
-        if source not in SOURCES:
-            print(f"Warning: Source '{source}' not implemented yet, skipping")
-            continue
-        print(f"Loading prompts for: {source}")
-        required_keys = required_keys_by_source.get(source)
-        try:
-            source_prompts[source] = load_source_prompts(source, data_dir, required_keys=required_keys)
-            print(f"  Loaded {len(source_prompts[source])} prompts")
-        except FileNotFoundError as e:
-            print(f"  Error: {e}")
-            print(f"  Run download first for source: {source}")
-
-    # Merge prompts into pairs
+    # Initialize stats
     stats = {
         "total": len(pairs),
         "merged": 0,
@@ -211,10 +195,22 @@ def merge_prompts(
         "by_source": {},
     }
 
-    merged_pairs = []
-    for pair in tqdm(pairs, desc="Merging prompts"):
+    # Group pairs by source for efficient processing
+    pairs_by_source = {}
+    for i, pair in enumerate(pairs):
         source = pair["prompt_source"]
-        prompt_metadata = pair["prompt_metadata"]
+        if source not in pairs_by_source:
+            pairs_by_source[source] = []
+        pairs_by_source[source].append((i, pair))
+
+    # Initialize merged_pairs with copies of original pairs
+    merged_pairs = [pair.copy() for pair in pairs]
+
+    # Process one source at a time to minimize memory usage
+    for source in sources_to_process:
+        if source not in SOURCES:
+            print(f"Warning: Source '{source}' not implemented yet, skipping")
+            continue
 
         # Initialize source stats
         if source not in stats["by_source"]:
@@ -224,37 +220,47 @@ def merge_prompts(
                 "skipped": 0,
             }
 
-        # Check if we have prompts for this source
-        if source not in source_prompts:
-            # Source not processed, keep pair as-is
-            merged_pairs.append(pair)
-            stats["skipped_source"] += 1
-            stats["by_source"][source]["skipped"] += 1
+        if source not in pairs_by_source:
             continue
 
-        # Get the lookup key for this source
-        lookup_key = get_lookup_key(source, prompt_metadata)
+        print(f"Loading prompts for: {source}")
+        required_keys = required_keys_by_source.get(source)
 
-        # Look up prompt
-        prompt_data = source_prompts[source].get(lookup_key)
-
-        if prompt_data is None:
-            print(
-                f"Warning: Prompt not found - source={source}, key={lookup_key}"
+        try:
+            source_prompts = load_source_prompts(
+                source, data_dir, required_keys=required_keys
             )
-            merged_pairs.append(pair)
-            stats["missing"] += 1
-            stats["by_source"][source]["missing"] += 1
+            print(f"  Loaded {len(source_prompts)} prompts")
+        except FileNotFoundError as e:
+            print(f"  Error: {e}")
+            print(f"  Run download first for source: {source}")
+            for idx, pair in pairs_by_source[source]:
+                stats["skipped_source"] += 1
+                stats["by_source"][source]["skipped"] += 1
             continue
 
-        # Merge prompt into pair
-        merged_pair = pair.copy()
-        merged_pair["prompt_content"] = prompt_data["prompt_content"]
-        merged_pair["prompt_metadata"] = prompt_data["metadata"]
-        merged_pairs.append(merged_pair)
+        # Merge prompts for this source
+        for idx, pair in tqdm(pairs_by_source[source], desc=f"Merging {source}"):
+            prompt_metadata = pair["prompt_metadata"]
+            lookup_key = get_lookup_key(source, prompt_metadata)
+            prompt_data = source_prompts.get(lookup_key)
 
-        stats["merged"] += 1
-        stats["by_source"][source]["merged"] += 1
+            if prompt_data is None:
+                print(f"Warning: Prompt not found - source={source}, key={lookup_key}")
+                stats["missing"] += 1
+                stats["by_source"][source]["missing"] += 1
+                continue
+
+            # Merge prompt into pair
+            merged_pairs[idx]["prompt_content"] = prompt_data["prompt_content"]
+            merged_pairs[idx]["prompt_metadata"] = prompt_data["metadata"]
+            stats["merged"] += 1
+            stats["by_source"][source]["merged"] += 1
+
+        # Release memory for this source before loading the next
+        del source_prompts
+        gc.collect()
+        print(f"  Released memory for {source}")
 
     # Save merged data
     os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
@@ -337,9 +343,7 @@ def main():
             if source in SOURCES:
                 print(f"\nDownloading: {source}")
                 try:
-                    download_source(
-                        source, args.data_dir, force=args.force_download
-                    )
+                    download_source(source, args.data_dir, force=args.force_download)
                 except Exception as e:
                     print(f"  Error downloading {source}: {e}")
             else:
@@ -359,4 +363,3 @@ def main():
 
 if __name__ == "__main__":
     exit(main())
-

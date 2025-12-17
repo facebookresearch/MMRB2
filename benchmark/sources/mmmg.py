@@ -11,13 +11,17 @@ MMMG source module.
 Data source: https://huggingface.co/datasets/UW-FMRL2/MMMG
 """
 
+import gc
+import glob
 import os
 import re
 import shutil
+from io import BytesIO
 from typing import Any, Dict
 
+import pyarrow as pa
 from datasets import load_dataset
-from tqdm import tqdm
+from PIL import Image
 
 SOURCE_NAME = "mmmg"
 HF_DATASET = "UW-FMRL2/MMMG"
@@ -60,7 +64,7 @@ def download(data_dir: str, force: bool = False) -> str:
 
 def load_prompts(data_dir: str) -> Dict[str, Dict[str, Any]]:
     """
-    Load prompts from MMMG.
+    Load prompts from MMMG using PyArrow with memory mapping for efficiency.
 
     Args:
         data_dir: Base directory containing downloaded data
@@ -79,80 +83,131 @@ def load_prompts(data_dir: str) -> Dict[str, Dict[str, Any]]:
     if use_fallback:
         print(f"[{SOURCE_NAME}] Fallback images available at {fallback_images_dir}")
 
-    print(f"[{SOURCE_NAME}] Loading dataset from HuggingFace...")
+    # Find the arrow file in cache
+    arrow_pattern = os.path.join(cache_dir, "**", "*.arrow")
+    arrow_files = glob.glob(arrow_pattern, recursive=True)
 
-    # Load dataset
-    if os.path.exists(cache_dir):
-        dataset = load_dataset(HF_DATASET, cache_dir=cache_dir, split="test")
-    else:
-        dataset = load_dataset(HF_DATASET, split="test")
+    if not arrow_files:
+        raise FileNotFoundError(
+            f"No arrow file found in {cache_dir}. Run download() first."
+        )
+
+    arrow_file = arrow_files[0]
+    print(f"[{SOURCE_NAME}] Loading from arrow file: {arrow_file}")
 
     prompts = {}
     pattern = re.compile(r"<(image_\d+)>")
 
-    for idx, row in enumerate(tqdm(dataset, desc=f"Loading {SOURCE_NAME}")):
-        category = row["category"]
+    # Open as stream (HuggingFace uses Arrow IPC stream format)
+    with pa.memory_map(arrow_file, "r") as mmap:
+        reader = pa.ipc.open_stream(mmap)
+        row_idx = 0
+        batch_idx = 0
 
-        # Skip if not image-related (same filter as original processing)
-        if category[0] != "i":
-            continue
+        # Read batches one at a time from the stream
+        for batch in reader:
+            batch_len = batch.num_rows
 
-        lookup_key = make_lookup_key(idx, category)
-        text = row["instruction"]
+            # Convert batch to pandas for easier access (one batch at a time)
+            df = batch.to_pandas()
 
-        # Parse text and images
-        prompt_content = []
-        last_idx = 0
+            for local_idx in range(batch_len):
+                idx = row_idx + local_idx
+                category = df.iloc[local_idx]["category"]
 
-        for match in pattern.finditer(text):
-            # Text before the <image_X>
-            if match.start() > last_idx:
-                part = text[last_idx : match.start()].strip()
-                if part:
-                    prompt_content.append(["text", part])
+                # Skip if not image-related
+                if category[0] != "i":
+                    continue
 
-            # The <image_X> part
-            img_key = match.group(1)  # e.g. "image_0"
-            if img_key in row and row[img_key] is not None:
-                image_filename = f"{idx}_{img_key}.jpg"
-                abs_path = os.path.join(images_dir, image_filename)
-                rel_path = os.path.join(SOURCE_NAME, "images", image_filename)
+                lookup_key = make_lookup_key(idx, category)
+                text = df.iloc[local_idx]["instruction"]
 
-                # Get image from fallback or save from dataset
-                if not os.path.exists(abs_path):
+                # Parse text and images
+                prompt_content = []
+                last_idx = 0
+
+                for match in pattern.finditer(text):
+                    # Text before the <image_X>
+                    if match.start() > last_idx:
+                        part = text[last_idx : match.start()].strip()
+                        if part:
+                            prompt_content.append(["text", part])
+
+                    # The <image_X> part
+                    img_key = match.group(1)  # e.g. "image_0"
+                    image_filename = f"{idx}_{img_key}.jpg"
+                    abs_path = os.path.join(images_dir, image_filename)
+                    rel_path = os.path.join(SOURCE_NAME, "images", image_filename)
                     fallback_path = os.path.join(fallback_images_dir, image_filename)
-                    if use_fallback and os.path.exists(fallback_path):
+
+                    # Check if image already exists on disk
+                    if os.path.exists(abs_path):
+                        prompt_content.append(["image", rel_path])
+                    elif use_fallback and os.path.exists(fallback_path):
                         shutil.copy(fallback_path, abs_path)
+                        prompt_content.append(["image", rel_path])
                     else:
-                        # Save from dataset
-                        row[img_key].convert("RGB").save(abs_path)
+                        # Get image bytes from dataframe
+                        try:
+                            img_data = df.iloc[local_idx].get(img_key)
+                            if img_data is not None:
+                                # Handle different formats
+                                if (
+                                    isinstance(img_data, dict)
+                                    and "bytes" in img_data
+                                    and img_data["bytes"]
+                                ):
+                                    img = Image.open(BytesIO(img_data["bytes"]))
+                                elif isinstance(img_data, bytes):
+                                    img = Image.open(BytesIO(img_data))
+                                elif hasattr(img_data, "convert"):
+                                    img = img_data
+                                else:
+                                    img = None
 
-                prompt_content.append(["image", rel_path])
+                                if img is not None:
+                                    img_rgb = img.convert("RGB")
+                                    img_rgb.save(abs_path)
+                                    img_rgb.close()
+                                    if hasattr(img, "close"):
+                                        img.close()
+                                    del img_rgb, img
+                                    prompt_content.append(["image", rel_path])
+                        except Exception as e:
+                            print(
+                                f"[{SOURCE_NAME}] Warning: Error processing {img_key} at idx {idx}: {e}"
+                            )
 
-            last_idx = match.end()
+                    last_idx = match.end()
 
-        # Remaining text after the last <image_X>
-        if last_idx < len(text):
-            part = text[last_idx:].strip()
-            if part:
-                # Clean up "ONLY" text (same as original processing)
-                part = (
-                    part.replace(" ONLY ", " ")
-                    .replace(" only ", " ")
-                    .replace(" Only ", " ")
-                )
-                prompt_content.append(["text", part])
+                # Remaining text after the last <image_X>
+                if last_idx < len(text):
+                    part = text[last_idx:].strip()
+                    if part:
+                        part = (
+                            part.replace(" ONLY ", " ")
+                            .replace(" only ", " ")
+                            .replace(" Only ", " ")
+                        )
+                        prompt_content.append(["text", part])
 
-        if prompt_content:
-            prompts[lookup_key] = {
-                "id": idx,
-                "lookup_key": lookup_key,
-                "prompt_content": prompt_content,
-                "metadata": {
-                    "id": idx,
-                    "category": category,
-                },
-            }
+                if prompt_content:
+                    prompts[lookup_key] = {
+                        "id": idx,
+                        "lookup_key": lookup_key,
+                        "prompt_content": prompt_content,
+                        "metadata": {
+                            "id": idx,
+                            "category": category,
+                        },
+                    }
+
+            # Update row index and cleanup after each batch
+            row_idx += batch_len
+            del df, batch
+            gc.collect()
+            batch_idx += 1
+            print(f"[{SOURCE_NAME}] Processed batch {batch_idx}")
 
     print(f"[{SOURCE_NAME}] Loaded {len(prompts)} prompts")
     return prompts

@@ -275,4 +275,3 @@ def load_prompts(data_dir: str) -> Dict[str, Dict[str, Any]]:
 
     print(f"[{SOURCE_NAME}] Loaded {len(prompts)} prompts")
     return prompts
-

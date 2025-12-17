@@ -134,4 +134,3 @@ def get_source_config(source_name: str) -> dict:
 def list_sources() -> list:
     """List all available sources."""
     return list(SOURCES.keys())
-
