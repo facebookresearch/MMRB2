@@ -2,16 +2,7 @@
 
 **Multimodal RewardBench 2** is a comprehensive benchmark for evaluating reward models on multimodal tasks including text-to-image generation, image editing, interleaved image-text generation, and visual reasoning.
 
-## ⚠️ Important Notice
 
-**This data is released under CC BY-NC 4.0 and is intended for benchmarking purposes only. This dataset should not be used for training models.**
-
-Third-party content (prompts, images from source benchmarks) pulled from other locations are subject to their own licenses and you may have other legal obligations or restrictions that govern your use of that content.
-
-**AI-Generated Content Disclosure**: This dataset contains outputs generated using artificial intelligence technologies, including but not limited to FLUX.1, and other generative models. Users should be aware that:
-- All model outputs in this dataset were generated using AI systems
-- Some outputs may be subject to additional license terms from respective model providers
-- Users must comply with applicable laws regarding AI-generated content disclosure
 
 ## 📋 Overview
 
@@ -167,19 +158,6 @@ Some model outputs in this dataset may be subject to specific license terms:
 
 **Note**: If upstream model authors/owners identify that our release breaches their output restriction terms, affected portions of the dataset may be removed.
 
-## 📖 Citation
-
-If you use MMRB2 in your research, please cite:
-
-```bibtex
-@article{mmrb2,
-  title={Multimodal RewardBench 2: A Comprehensive Benchmark for Multimodal Reward Models},
-  author={...},
-  journal={...},
-  year={2024}
-}
-```
-
 ## 🤝 Contributing
 
 We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
@@ -191,3 +169,14 @@ For questions or issues, please open a GitHub issue.
 ## Code of Conduct
 
 Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before participating in our community.
+
+## ⚠️ Notice
+
+**This data is released under CC BY-NC 4.0 and is intended for benchmarking purposes only. This dataset should not be used for training models.**
+
+Third-party content (prompts, images from source benchmarks) pulled from other locations are subject to their own licenses and you may have other legal obligations or restrictions that govern your use of that content.
+
+**AI-Generated Content Disclosure**: This dataset contains outputs generated using artificial intelligence technologies, including but not limited to FLUX.1, and other generative models. Users should be aware that:
+- All model outputs in this dataset were generated using AI systems
+- Some outputs may be subject to additional license terms from respective model providers
+- Users must comply with applicable laws regarding AI-generated content disclosure
