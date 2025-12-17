@@ -51,11 +51,7 @@ def download(data_dir: str, force: bool = False) -> str:
     images_dir = os.path.join(source_dir, "images")
     captions_dir = os.path.join(source_dir, "captions")
 
-    if (
-        os.path.exists(images_dir)
-        and os.path.exists(captions_dir)
-        and not force
-    ):
+    if os.path.exists(images_dir) and os.path.exists(captions_dir) and not force:
         print(f"[{SOURCE_NAME}] Already downloaded: {source_dir}")
         return source_dir
 
@@ -71,9 +67,7 @@ def download(data_dir: str, force: bool = False) -> str:
     with zipfile.ZipFile(zip_path, "r") as z:
         # Extract only data/images and data/captions
         for member in tqdm(z.namelist(), desc=f"Extracting {SOURCE_NAME}"):
-            if member.startswith("data/images/") or member.startswith(
-                "data/captions/"
-            ):
+            if member.startswith("data/images/") or member.startswith("data/captions/"):
                 # Remove 'data/' prefix when extracting
                 target = os.path.join(source_dir, member[5:])  # Skip 'data/'
                 if member.endswith("/"):
@@ -130,7 +124,12 @@ def load_prompts(
     prompt_counter = 0
 
     # Walk through all categories
-    for category_path in ["live_subject/animal", "live_subject/human", "object", "style"]:
+    for category_path in [
+        "live_subject/animal",
+        "live_subject/human",
+        "object",
+        "style",
+    ]:
         category_img_dir = os.path.join(images_dir, category_path)
         category_cap_dir = os.path.join(captions_dir, category_path)
 
@@ -161,9 +160,7 @@ def load_prompts(
             # Copy image to output directory with unique name
             output_img_name = f"{category_path.replace('/', '_')}_{img_file}"
             output_img_path = os.path.join(output_images_dir, output_img_name)
-            rel_img_path = os.path.join(
-                SOURCE_NAME, "output_images", output_img_name
-            )
+            rel_img_path = os.path.join(SOURCE_NAME, "output_images", output_img_name)
 
             if not os.path.exists(output_img_path):
                 shutil.copy(img_path, output_img_path)
@@ -213,4 +210,3 @@ def load_prompts(
 
     print(f"[{SOURCE_NAME}] Loaded {len(prompts)} prompts")
     return prompts
-

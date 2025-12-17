@@ -129,18 +129,20 @@ def download(data_dir: str, force: bool = False) -> str:
             )
         prompt_content.append(["text", question])
 
-        prompts.append({
-            "id": prompt_id,
-            "lookup_key": prompt_id,
-            "prompt_content": prompt_content,
-            "metadata": {
+        prompts.append(
+            {
                 "id": prompt_id,
-                "sub_task": category,
-                "question": row["question"],
-                "choices": choices,
-                "answer": row.get("answer", ""),
-            },
-        })
+                "lookup_key": prompt_id,
+                "prompt_content": prompt_content,
+                "metadata": {
+                    "id": prompt_id,
+                    "sub_task": category,
+                    "question": row["question"],
+                    "choices": choices,
+                    "answer": row.get("answer", ""),
+                },
+            }
+        )
 
     # Save prompts
     with open(prompts_file, "w") as f:

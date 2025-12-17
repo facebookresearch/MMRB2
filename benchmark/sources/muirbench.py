@@ -42,11 +42,7 @@ def download(data_dir: str, force: bool = False) -> str:
     prompts_path = os.path.join(source_dir, "prompts.jsonl")
     images_dir = os.path.join(source_dir, "images")
 
-    if (
-        os.path.exists(prompts_path)
-        and os.path.exists(images_dir)
-        and not force
-    ):
+    if os.path.exists(prompts_path) and os.path.exists(images_dir) and not force:
         print(f"[{SOURCE_NAME}] Already downloaded: {source_dir}")
         return source_dir
 
@@ -164,9 +160,7 @@ def load_prompts(data_dir: str) -> Dict[str, Dict[str, Any]]:
                 if segment.strip():
                     prompt_content.append(["text", segment])
                 if i < len(segments) - 1 and img_idx < len(image_paths):
-                    rel_path = os.path.join(
-                        SOURCE_NAME, "images", image_paths[img_idx]
-                    )
+                    rel_path = os.path.join(SOURCE_NAME, "images", image_paths[img_idx])
                     prompt_content.append(["image", rel_path])
                     img_idx += 1
 

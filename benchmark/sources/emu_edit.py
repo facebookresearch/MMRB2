@@ -69,9 +69,7 @@ def download(data_dir: str, force: bool = False) -> str:
             image_filename = f"{split}_{ex['task']}_{prompt_id}.jpg"
             image_path = os.path.join(image_dir, image_filename)
             # Store path relative to data_dir for portability
-            relative_image_path = os.path.join(
-                SOURCE_NAME, "images", image_filename
-            )
+            relative_image_path = os.path.join(SOURCE_NAME, "images", image_filename)
             if ex["image"] is not None and ex["image"].get("bytes"):
                 with open(image_path, "wb") as f:
                     f.write(ex["image"]["bytes"])

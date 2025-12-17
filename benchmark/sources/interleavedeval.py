@@ -53,9 +53,7 @@ def download(data_dir: str, force: bool = False) -> str:
 
     # Download interleaved_bench.json
     # Note: This is a model repo, not a dataset repo
-    json_hf = hf_hub_download(
-        HF_REPO, "interleaved_bench.json", repo_type="model"
-    )
+    json_hf = hf_hub_download(HF_REPO, "interleaved_bench.json", repo_type="model")
     shutil.copy(json_hf, json_path)
     print(f"[{SOURCE_NAME}] Downloaded interleaved_bench.json")
 
@@ -105,9 +103,7 @@ def load_prompts(data_dir: str) -> Dict[str, Dict[str, Any]]:
     os.makedirs(output_images_dir, exist_ok=True)
 
     if not os.path.exists(json_path):
-        raise FileNotFoundError(
-            f"interleaved_bench.json not found at {json_path}"
-        )
+        raise FileNotFoundError(f"interleaved_bench.json not found at {json_path}")
 
     with open(json_path, "r") as f:
         data = json.load(f)

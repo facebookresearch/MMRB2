@@ -45,11 +45,7 @@ def download(data_dir: str, force: bool = False) -> str:
     prompts_path = os.path.join(source_dir, "MindCube_tinybench.jsonl")
     images_dir = os.path.join(source_dir, "other_all_image")
 
-    if (
-        os.path.exists(prompts_path)
-        and os.path.exists(images_dir)
-        and not force
-    ):
+    if os.path.exists(prompts_path) and os.path.exists(images_dir) and not force:
         print(f"[{SOURCE_NAME}] Already downloaded: {source_dir}")
         return source_dir
 
@@ -116,9 +112,7 @@ def load_prompts(data_dir: str) -> Dict[str, Dict[str, Any]]:
     os.makedirs(output_images_dir, exist_ok=True)
 
     if not os.path.exists(prompts_path):
-        raise FileNotFoundError(
-            f"MindCube_tinybench.jsonl not found at {prompts_path}"
-        )
+        raise FileNotFoundError(f"MindCube_tinybench.jsonl not found at {prompts_path}")
 
     # Load all samples
     samples = []

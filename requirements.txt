@@ -6,6 +6,7 @@ huggingface_hub>=0.17.0
 tqdm>=4.65.0
 requests>=2.28.0
 Pillow>=9.0.0
+torchcodec>=0.1.0
 
 # For evaluation (optional)
 # torch>=2.0.0

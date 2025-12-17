@@ -66,9 +66,7 @@ def download(data_dir: str, force: bool = False) -> str:
 
         # Checkout specific commit for reproducibility
         if "commit" in config:
-            print(
-                f"[{SOURCE_NAME}] Checking out commit {config['commit'][:8]}..."
-            )
+            print(f"[{SOURCE_NAME}] Checking out commit {config['commit'][:8]}...")
             subprocess.run(
                 ["git", "checkout", config["commit"]],
                 cwd=repo_dir,
@@ -163,15 +161,11 @@ def load_prompts(data_dir: str) -> Dict[str, Dict[str, Any]]:
 
                     dst_path = os.path.join(output_images_dir, image_filename)
 
-                    if os.path.exists(src_path) and not os.path.exists(
-                        dst_path
-                    ):
+                    if os.path.exists(src_path) and not os.path.exists(dst_path):
                         shutil.copy(src_path, dst_path)
 
                     # Store relative path for portability
-                    rel_path = os.path.join(
-                        SOURCE_NAME, "images", image_filename
-                    )
+                    rel_path = os.path.join(SOURCE_NAME, "images", image_filename)
                     prompt_content.append(["image", rel_path])
 
             # Process Golden answer for metadata
@@ -199,14 +193,10 @@ def load_prompts(data_dir: str) -> Dict[str, Dict[str, Any]]:
 
                     dst_path = os.path.join(output_images_dir, image_filename)
 
-                    if os.path.exists(src_path) and not os.path.exists(
-                        dst_path
-                    ):
+                    if os.path.exists(src_path) and not os.path.exists(dst_path):
                         shutil.copy(src_path, dst_path)
 
-                    rel_path = os.path.join(
-                        SOURCE_NAME, "images", image_filename
-                    )
+                    rel_path = os.path.join(SOURCE_NAME, "images", image_filename)
                     gold_answer.append(["image", rel_path])
 
             prompts[lookup_key] = {

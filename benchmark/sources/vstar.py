@@ -43,11 +43,7 @@ def download(data_dir: str, force: bool = False) -> str:
     prompts_file = os.path.join(source_dir, "prompts.jsonl")
     images_dir = os.path.join(source_dir, "images")
 
-    if (
-        os.path.exists(prompts_file)
-        and os.path.exists(images_dir)
-        and not force
-    ):
+    if os.path.exists(prompts_file) and os.path.exists(images_dir) and not force:
         print(f"[{SOURCE_NAME}] Already downloaded: {source_dir}")
         return source_dir
 
@@ -57,9 +53,7 @@ def download(data_dir: str, force: bool = False) -> str:
     print(f"[{SOURCE_NAME}] Downloading from HuggingFace: {HF_REPO}")
 
     # Download test_questions.jsonl
-    data_path = hf_hub_download(
-        HF_REPO, "test_questions.jsonl", repo_type="dataset"
-    )
+    data_path = hf_hub_download(HF_REPO, "test_questions.jsonl", repo_type="dataset")
     shutil.copy(data_path, os.path.join(source_dir, "test_questions.jsonl"))
     print(f"[{SOURCE_NAME}] Downloaded test_questions.jsonl")
 
@@ -84,9 +78,7 @@ def download(data_dir: str, force: bool = False) -> str:
             if not os.path.exists(dst_path):
                 shutil.copy(img_hf, dst_path)
         except Exception as e:
-            print(
-                f"[{SOURCE_NAME}] Warning: Failed to download {img_path}: {e}"
-            )
+            print(f"[{SOURCE_NAME}] Warning: Failed to download {img_path}: {e}")
 
     # Process prompts
     prompts = []

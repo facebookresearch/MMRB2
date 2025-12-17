@@ -29,7 +29,7 @@ SOURCE_NAME = "text_heavy_edit"
 # The JSONL path should be set via environment variable or data will be skipped.
 LOCAL_JSONL = os.environ.get(
     "TEXT_HEAVY_EDIT_JSONL",
-    ""  # Empty default - will skip if not set
+    "",  # Empty default - will skip if not set
 )
 
 
@@ -57,7 +57,9 @@ def download(data_dir: str, force: bool = False) -> str:
     if LOCAL_JSONL and os.path.exists(LOCAL_JSONL):
         print(f"[{SOURCE_NAME}] Using local processed data")
     else:
-        print(f"[{SOURCE_NAME}] Note: Local data not configured (set TEXT_HEAVY_EDIT_JSONL env var)")
+        print(
+            f"[{SOURCE_NAME}] Note: Local data not configured (set TEXT_HEAVY_EDIT_JSONL env var)"
+        )
 
     return source_dir
 
@@ -79,7 +81,9 @@ def load_prompts(data_dir: str) -> Dict[str, Dict[str, Any]]:
     os.makedirs(images_dir, exist_ok=True)
 
     if not LOCAL_JSONL or not os.path.exists(LOCAL_JSONL):
-        print(f"[{SOURCE_NAME}] Skipping: JSONL not configured (set TEXT_HEAVY_EDIT_JSONL env var)")
+        print(
+            f"[{SOURCE_NAME}] Skipping: JSONL not configured (set TEXT_HEAVY_EDIT_JSONL env var)"
+        )
         return {}
 
     prompts = {}
