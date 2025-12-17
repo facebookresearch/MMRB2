@@ -79,6 +79,8 @@ def download(data_dir: str, force: bool = False) -> str:
             # Cast images to not decode for raw access
             dataset = dataset.cast_column("image_1", Image(decode=False))
             dataset = dataset.cast_column("image_2", Image(decode=False))
+            dataset = dataset.cast_column("image_3", Image(decode=False))
+            dataset = dataset.cast_column("image_4", Image(decode=False))
             for row in dataset:
                 # Add sub_task from config name if not present
                 if "sub_task" not in row or not row["sub_task"]:
@@ -91,10 +93,10 @@ def download(data_dir: str, force: bool = False) -> str:
     print(f"[{SOURCE_NAME}] Processing {len(all_rows)} total samples...")
 
     prompts = []
-    for idx, row in enumerate(tqdm(all_rows, desc=f"Processing {SOURCE_NAME}")):
-        # Build ID: val_{Category}_{idx}
+    for row in tqdm(all_rows, desc=f"Processing {SOURCE_NAME}"):
+        # Use the idx field from the dataset as the ID
+        prompt_id = row["idx"]
         category = row["sub_task"]
-        prompt_id = f"val_{category}_{idx}"
 
         # Process images and question
         prompt_content = []
@@ -120,14 +122,35 @@ def download(data_dir: str, force: bool = False) -> str:
             prompt_content.append(["image", rel_path])
             image_count += 1
 
-        # Add question text
-        question = row["question"]
+        # Image 3 (if exists)
+        if row.get("image_3") is not None and row["image_3"].get("bytes"):
+            img_filename = f"{prompt_id}_3.jpg"
+            img_path = os.path.join(images_dir, img_filename)
+            with open(img_path, "wb") as f:
+                f.write(row["image_3"]["bytes"])
+            rel_path = os.path.join(SOURCE_NAME, "images", img_filename)
+            prompt_content.append(["image", rel_path])
+            image_count += 1
+
+        # Image 4 (if exists)
+        if row.get("image_4") is not None and row["image_4"].get("bytes"):
+            img_filename = f"{prompt_id}_4.jpg"
+            img_path = os.path.join(images_dir, img_filename)
+            with open(img_path, "wb") as f:
+                f.write(row["image_4"]["bytes"])
+            rel_path = os.path.join(SOURCE_NAME, "images", img_filename)
+            prompt_content.append(["image", rel_path])
+            image_count += 1
+
+        # Add prompt text (use 'prompt' field which has the full formatted text)
+        prompt_text = row.get("prompt") or row["question"]
+        # If prompt doesn't include choices, add them
         choices = row.get("choices", [])
-        if choices:
-            question += "\nChoices:\n" + "\n".join(
+        if choices and "(A)" not in prompt_text and "(a)" not in prompt_text:
+            prompt_text += "\nChoices:\n" + "\n".join(
                 f"({chr(65+i)}) {c}" for i, c in enumerate(choices)
             )
-        prompt_content.append(["text", question])
+        prompt_content.append(["text", prompt_text])
 
         prompts.append(
             {
@@ -138,6 +161,7 @@ def download(data_dir: str, force: bool = False) -> str:
                     "id": prompt_id,
                     "sub_task": category,
                     "question": row["question"],
+                    "prompt": row.get("prompt", ""),
                     "choices": choices,
                     "answer": row.get("answer", ""),
                 },
