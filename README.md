@@ -1,17 +1,25 @@
 # Multimodal RewardBench 2 (MMRB2)
 
-<p align="center">
-  <img src="assets/logo.png" width="200" alt="MMRB2 Logo">
-</p>
-
 **Multimodal RewardBench 2** is a comprehensive benchmark for evaluating reward models on multimodal tasks including text-to-image generation, image editing, interleaved image-text generation, and visual reasoning.
+
+## ⚠️ Important Notice
+
+**This data is released under CC BY-NC 4.0 and is intended for benchmarking purposes only. This dataset should not be used for training models.**
+
+Third-party content (prompts, images from source benchmarks) pulled from other locations are subject to their own licenses and you may have other legal obligations or restrictions that govern your use of that content.
+
+**AI-Generated Content Disclosure**: This dataset contains outputs generated using artificial intelligence technologies, including but not limited to FLUX.1, and other generative models. Users should be aware that:
+- All model outputs in this dataset were generated using AI systems
+- Some outputs may be subject to additional license terms from respective model providers
+- Users must comply with applicable laws regarding AI-generated content disclosure
 
 ## 📋 Overview
 
 MMRB2 provides:
 - **4 Task Categories**: T2I, Edit, Interleaved, and Reasoning
+- **~4,000 Evaluation Pairs**: Human-annotated preference data
 - **Diverse Sources**: Aggregated from 20+ benchmark datasets
-- **Human Annotations**: High-quality preference labels
+- **Human Annotations**: High-quality preference labels indicating which model output is better
 - **Standardized Evaluation**: Consistent evaluation protocol
 
 ## 🏗️ Repository Structure
@@ -20,11 +28,14 @@ MMRB2 provides:
 MMRB2/
 ├── benchmark/           # Benchmark data and build scripts
 │   ├── sources/         # Source modules for downloading data
-│   ├── *_response_only.json  # Response data (no prompts)
+│   ├── *_response_only.json  # Response data (prompts downloaded at build time)
 │   ├── run_release.sh   # Main build script
 │   └── ...
 ├── evaluate/            # Evaluation scripts (coming soon)
 ├── requirements.txt     # Python dependencies
+├── LICENSE              # CC BY-NC 4.0 License
+├── CODE_OF_CONDUCT.md   # Community guidelines
+├── CONTRIBUTING.md      # Contribution guidelines
 └── README.md
 ```
 
@@ -116,6 +127,7 @@ Each task JSON file contains pairs with the following structure:
 | Edit | ~500 | 6 |
 | Interleaved | ~1000 | 4 |
 | Reasoning | ~1000 | 6 |
+| **Total** | **~4000** | **21** |
 
 ## 🔗 Data Sources
 
@@ -131,7 +143,29 @@ MMRB2 aggregates prompts from the following benchmarks:
 
 ## 📜 License
 
-This project is licensed under [LICENSE].
+This project is licensed under the **Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0)**. See the [LICENSE](LICENSE) file for details.
+
+### Key Terms:
+- **NonCommercial Use Only**: This data may not be used for commercial purposes
+- **Benchmarking Only**: This dataset is intended for benchmarking and evaluation purposes only, not for training models
+- **Attribution Required**: You must give appropriate credit when using this dataset
+
+### Third-Party Content
+
+This dataset includes:
+- **Prompts** from various third-party benchmarks (subject to their original licenses)
+- **Model outputs** from various AI models (subject to respective model licenses)
+
+Users are responsible for ensuring compliance with all applicable licenses when using this dataset.
+
+### Model Output Licenses
+
+Some model outputs in this dataset may be subject to specific license terms:
+
+- **FLUX.1 [dev]** outputs require compliance with content filtering and AI disclosure requirements
+- Other model outputs may have their own license restrictions
+
+**Note**: If upstream model authors/owners identify that our release breaches their output restriction terms, affected portions of the dataset may be removed.
 
 ## 📖 Citation
 
@@ -148,9 +182,12 @@ If you use MMRB2 in your research, please cite:
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our contributing guidelines.
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## 📧 Contact
 
-For questions or issues, please open a GitHub issue or contact the maintainers.
+For questions or issues, please open a GitHub issue.
 
+## Code of Conduct
+
+Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before participating in our community.

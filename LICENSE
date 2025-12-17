@@ -1,0 +1,56 @@
+Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0)
+
+Copyright (c) Meta Platforms, Inc. and affiliates.
+
+This work is licensed under the Creative Commons Attribution-NonCommercial 4.0 
+International License. To view a copy of this license, visit:
+http://creativecommons.org/licenses/by-nc/4.0/
+
+or send a letter to:
+Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
+
+================================================================================
+
+You are free to:
+
+- Share — copy and redistribute the material in any medium or format
+- Adapt — remix, transform, and build upon the material
+
+Under the following terms:
+
+- Attribution — You must give appropriate credit, provide a link to the license, 
+  and indicate if changes were made. You may do so in any reasonable manner, but 
+  not in any way that suggests the licensor endorses you or your use.
+
+- NonCommercial — You may not use the material for commercial purposes.
+
+- No additional restrictions — You may not apply legal terms or technological 
+  measures that legally restrict others from doing anything the license permits.
+
+================================================================================
+
+NOTICES:
+
+This dataset includes model outputs from various AI models. These outputs may be 
+subject to additional license terms from the respective model providers:
+
+- FLUX.1 [dev] outputs are subject to the FLUX.1 [dev] Non-Commercial License.
+  Users must ensure compliance with content filtering and AI disclosure requirements.
+
+- Other model outputs may be subject to their respective model licenses.
+
+Third-party content (prompts, images from source benchmarks) pulled from other 
+locations are subject to their own licenses and you may have other legal 
+obligations or restrictions that govern your use of that content.
+
+================================================================================
+
+DISCLAIMER:
+
+THE DATA IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR 
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER 
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
+CONNECTION WITH THE DATA OR THE USE OR OTHER DEALINGS IN THE DATA.
+
