@@ -23,7 +23,7 @@ evaluate/
 
 Generate pairwise judgements using any reward models. We provide example implementations for a few multimodal LLM-as-a-judge, but you can easily add your own LLM as the base model for judges.
 
-Note that you don't necessarily need an LLM-as-a-judge, you can also use any other models, as long as you process the results in the correct format. Here we mainly provide the codes for using any LLM as judge.
+Note that you don't necessarily need an LLM-as-a-judge, **you can also use any other models, as long as you process the results in the correct format.** Here we mainly provide the codes for using any LLM as judge.
 
 ### Example Evaluators
 
