@@ -7,7 +7,7 @@
 Reward models (RMs) are essential for training large language models (LLMs), but remain underexplored for omni models that handle interleaved image and text sequences. We introduce **Multimodal RewardBench 2 (MMRB2)**, the first comprehensive benchmark for reward models on multimodal understanding and (interleaved) generation. MMRB2 spans four tasks: text-to-image, image editing, interleaved generation, and multimodal reasoning ("thinking-with-images"), providing 1,000 expert-annotated preference pairs per task from 23 models and agents across 21 source tasks. MMRB2 is designed with: (1) practical but challenging prompts; (2) responses from state-of-the-art models and agents; and (3) preference pairs with strong human-expert consensus, curated via an ensemble filtering strategy. 
 
 <p align="center">
-  <img src="assets/fig-1.pdf" alt="Examples of MMRB2" width="80%">
+  <img src="assets/fig-1.jpg" alt="Examples of MMRB2" width="80%">
   <br>
   <em>Examples of MMRB2</em>
 </p>
@@ -15,7 +15,7 @@ Reward models (RMs) are essential for training large language models (LLMs), but
 Using MMRB2, we study existing judges for each subtask, including multimodal LLM-as-a-judge and models trained with human preferences. The latest Gemini 3 Pro attains 75-80% accuracy. GPT-5 and Gemini 2.5 Pro reach 66-75% accuracy, compared to >90% for humans, yet surpass the widely used GPT-4o (59%). The best performing open-source model Qwen3-VL-32B achieves similar accuracies as Gemini 2.5 Flash (64%). We also show that MMRB2 performance strongly correlates with downstream task success using Best-of-N sampling and conduct an in-depth analysis that shows key areas to improve the reward models going forward.
 
 <p align="center">
-  <img src="assets/fig3.pdf" alt="Benchmark Curation Pipeline" width="100%">
+  <img src="assets/fig3.jpg" alt="Benchmark Curation Pipeline" width="100%">
   <br>
   <em>Benchmark curation pipeline</em>
 </p>
@@ -30,7 +30,7 @@ This repo provides the data and evaluation codes for MMRB2:
 - **Standardized Evaluation**: Positional-consistent evaluation protocol
 
 <p align="center">
-  <img src="assets/fig2_v3.pdf" alt="Breakdown of MMRB2" width="100%">
+  <img src="assets/fig2_v3.jpg" alt="Breakdown of MMRB2" width="100%">
   <br>
   <em>Breakdown of MMRB2 by task type and source, and detailed categories under each task</em>
 </p>
