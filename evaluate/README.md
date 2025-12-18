@@ -19,9 +19,11 @@ evaluate/
 
 ---
 
-## Part 1: Generate Judgements
+## Part 1: Generate Judgements (optional)
 
 Generate pairwise judgements using any reward models. We provide example implementations for a few multimodal LLM-as-a-judge, but you can easily add your own LLM as the base model for judges.
+
+Note that you don't necessarily need an LLM-as-a-judge, you can also use any other models, as long as you process the results in the correct format. Here we mainly provide the codes for using any LLM as judge.
 
 ### Example Evaluators
 
@@ -88,7 +90,7 @@ python multi_gpu_evaluate.py \
 | Interleaved | `interleaved` | interleaved.json |
 | Visual Reasoning | `reasoning` | reasoning.json |
 
-### Adding Your Own Model
+### Adding Your Own LLM as judge
 
 You can add your own model as a judge by following these steps:
 
