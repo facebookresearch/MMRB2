@@ -7,7 +7,7 @@
 Reward models (RMs) are essential for training large language models (LLMs), but remain underexplored for omni models that handle interleaved image and text sequences. We introduce **Multimodal RewardBench 2 (MMRB2)**, the first comprehensive benchmark for reward models on multimodal understanding and (interleaved) generation. MMRB2 spans four tasks: text-to-image, image editing, interleaved generation, and multimodal reasoning ("thinking-with-images"), providing 1,000 expert-annotated preference pairs per task from 23 models and agents across 21 source tasks. MMRB2 is designed with: (1) practical but challenging prompts; (2) responses from state-of-the-art models and agents; and (3) preference pairs with strong human-expert consensus, curated via an ensemble filtering strategy. 
 
 <p align="center">
-  <img src="assets/fig-1.jpg" alt="Examples of MMRB2" width="80%">
+  <img src="assets/fig-1.jpg" alt="Examples of MMRB2" width="100%">
   <br>
   <em>Examples of MMRB2</em>
 </p>
