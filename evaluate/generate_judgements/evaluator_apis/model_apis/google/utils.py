@@ -22,9 +22,7 @@ def _call_with_timeout(func, timeout_seconds: int, *args, **kwargs):
     thread.join(timeout_seconds)
 
     if thread.is_alive():
-        raise TimeoutError(
-            f"Operation timed out after {timeout_seconds} seconds"
-        )
+        raise TimeoutError(f"Operation timed out after {timeout_seconds} seconds")
 
     if error_holder["error"] is not None:
         raise error_holder["error"]
@@ -36,16 +34,16 @@ def generate_content_with_retry(
     client, max_retries: int = 8, timeout_seconds: int = 600, **kwargs
 ) -> Any:
     """Generate content with retry logic and timeout.
-    
+
     Args:
         client: The Gemini client instance.
         max_retries: Maximum number of retry attempts.
         timeout_seconds: Timeout for each attempt in seconds.
         **kwargs: Arguments to pass to generate_content.
-        
+
     Returns:
         The API response.
-        
+
     Raises:
         ValueError: If all retries are exhausted.
     """
@@ -60,7 +58,4 @@ def generate_content_with_retry(
             print(f"Google API Error in attempt {attempt + 1}: {e}")
             # Exponential backoff
             sleep(2**attempt)
-    raise ValueError(
-        f"Failed after {max_retries} attempts: {str(last_exception)}"
-    )
-
+    raise ValueError(f"Failed after {max_retries} attempts: {str(last_exception)}")

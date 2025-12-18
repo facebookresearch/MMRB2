@@ -1,6 +1,7 @@
 """OpenAI GPT API for text generation."""
 
 import datetime
+import os
 from pathlib import Path
 from typing import List
 
@@ -16,9 +17,9 @@ class OpenAIGPT(BaseAPI):
         "gpt-4o": "gpt-4o",
     }
 
-    def __init__(self, model_name: str = "gpt-4.1"):
+    def __init__(self, model_name: str = "gpt-4o"):
         """Initialize OpenAI GPT with specified model.
-        
+
         Args:
             model_name: Name of the model to use.
         """
@@ -29,20 +30,15 @@ class OpenAIGPT(BaseAPI):
             )
         self.openai_model_name = model_name
 
-        # Initialize client
-        try:
-            creds = self.get_api_key()
-            azure_endpoint = creds["azure_endpoint"]
-            api_key = creds["api_key"]
-
-            self.client = OpenAIClient(
-                model_name=model_name,
-                azure_endpoint=azure_endpoint,
-                api_key=api_key,
+        # Initialize client - will read from OPENAI_API_KEY env var
+        api_key = os.environ.get("OPENAI_API_KEY")
+        if not api_key:
+            raise ValueError(
+                "OpenAI API key not found. Please set OPENAI_API_KEY environment variable:\n"
+                "  export OPENAI_API_KEY='your-api-key'"
             )
 
-        except Exception as e:
-            raise ValueError(f"Failed to initialize OpenAI GPT client: {e}")
+        self.client = OpenAIClient(model_name=model_name, api_key=api_key)
 
     @property
     def model_name(self) -> str:
@@ -52,12 +48,12 @@ class OpenAIGPT(BaseAPI):
         self, prompt: Prompt, output_path: Path, n: int = 1
     ) -> List[APIResponse]:
         """Generate text from the model.
-        
+
         Args:
             prompt: The prompt containing text and/or images.
             output_path: Output path (unused for text generation).
             n: Number of responses to generate.
-            
+
         Returns:
             List of APIResponse objects.
         """
@@ -77,9 +73,7 @@ class OpenAIGPT(BaseAPI):
         metadata = {
             "input_content": prompt.prompt,
             "input_text": extract_text_from_prompt(prompt),
-            "input_images_count": len(
-                [c for c in prompt.prompt if c[0] == "image"]
-            ),
+            "input_images_count": len([c for c in prompt.prompt if c[0] == "image"]),
             "num_images_generated": 0,
             "prompt_source": prompt.source,
             "prompt_metadata": prompt.metadata,
@@ -99,6 +93,3 @@ class OpenAIGPT(BaseAPI):
             )
 
         return outputs
-
-
-

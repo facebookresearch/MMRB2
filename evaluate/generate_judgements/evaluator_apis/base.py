@@ -8,18 +8,19 @@ from typing import List
 @dataclass
 class EvaluatorResult:
     """Result from a pairwise evaluation.
-    
+
     Attributes:
         judgement: The judgement result - "A", "B", or "tie" for pairwise judges.
         metadata: Additional information such as rationales from the LLM.
     """
+
     judgement: str
     metadata: dict = field(default_factory=dict)
 
 
 class BasePairwiseEvaluator(ABC):
     """Abstract base class for pairwise evaluators."""
-    
+
     @property
     @abstractmethod
     def evaluator_name(self) -> str:
@@ -45,9 +46,8 @@ class BasePairwiseEvaluator(ABC):
             task_type: The type of task (image, edit, interleaved, reasoning).
             n: The number of judgements to generate. Defaults to 1.
             verbose: Whether to print verbose output.
-            
+
         Returns:
             List of EvaluatorResult objects containing judgements.
         """
         pass
-

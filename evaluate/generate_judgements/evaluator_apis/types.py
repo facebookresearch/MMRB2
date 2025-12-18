@@ -7,12 +7,13 @@ from typing import Any, List
 @dataclass
 class Prompt:
     """Represents a multimodal prompt with text and images.
-    
+
     Attributes:
         prompt: List of content segments, each as [type, content] where type is "text" or "image".
         source: Source identifier for the prompt.
         metadata: Additional metadata associated with the prompt.
     """
+
     prompt: List[List[Any]]
     source: str
     metadata: dict = field(default_factory=dict)
@@ -36,9 +37,7 @@ class Prompt:
         }
 
 
-def create_prompt(
-    prompt: List[List[Any]], source: str, metadata: dict
-) -> Prompt:
+def create_prompt(prompt: List[List[Any]], source: str, metadata: dict) -> Prompt:
     """Create a Prompt object with the given parameters.
 
     Args:
@@ -68,4 +67,3 @@ def extract_text_from_prompt(prompt: Prompt) -> str:
             text_parts.append(str(content))
 
     return " ".join(text_parts).strip()
-

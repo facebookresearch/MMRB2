@@ -29,7 +29,7 @@ Note that you don't necessarily need an LLM-as-a-judge, **you can also use any o
 
 | Evaluator | Type | Description |
 |-----------|------|-------------|
-| `gpt4o-pairwise` | API | GPT-4o via Azure OpenAI |
+| `gpt4o-pairwise` | API | GPT-4o via OpenAI |
 | `gemini25flash-pairwise` | API | Gemini 2.5 Flash |
 | `qwen3vl8b-pairwise` | Local | Qwen3-VL-8B (requires GPU) |
 
@@ -48,32 +48,30 @@ Pillow
 
 ### Setup
 
-1. **Set up API keys:**
+**Set up API keys via environment variables:**
 
-   For OpenAI/Azure:
-   ```bash
-   export AZURE_OPENAI_ENDPOINT="your-endpoint"
-   export AZURE_OPENAI_API_KEY="your-key"
-   ```
-   
-   For Google:
-   ```bash
-   export GOOGLE_API_KEY="your-key"
-   ```
+```bash
+# For OpenAI:
+export OPENAI_API_KEY="your-openai-api-key"
 
-2. **Run evaluation:**
-   ```bash
-   cd generate_judgements
-   
-   # Run GPT-4o evaluation
-   ./run_gpt4o.sh
-   
-   # Or run Gemini 2.5 Flash
-   ./run_gemini25flash.sh
-   
-   # Or run local Qwen3 (requires 8 GPUs)
-   ./run_qwen3.sh
-   ```
+# For Google:
+export GOOGLE_API_KEY="your-google-api-key"
+```
+
+**Run evaluation:**
+
+```bash
+cd generate_judgements
+
+# Run GPT-4o evaluation
+./run_gpt4o.sh
+
+# Or run Gemini 2.5 Flash
+./run_gemini25flash.sh
+
+# Or run local Qwen3 (requires 8 GPUs)
+./run_qwen3.sh
+```
 
 ### Manual Usage
 
@@ -236,5 +234,4 @@ Overall                    53.42%
 ```
 
 ---
-
 

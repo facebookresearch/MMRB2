@@ -136,6 +136,17 @@ Each task JSON file contains pairs with the following structure:
 **You can evaluate any reward models by save their predictions in the same format as sample judgement files in `evaluate/generate_judgements/outputs/`, and see step 2**
 
 Here we also provide example implementations of multimodal LLM judges for GPT-4o, Gemini 2.5 Flash, and Qwen3-VL-8B, and you can easily add other LLMs. See [`evaluate/README.md`](evaluate/README.md) for detailed setup and instructions on adding custom models. Note that the reward model is not limited to LLM judges. You can skip this part if you implemented your own.
+
+**Setup API keys:**
+```bash
+# For OpenAI:
+export OPENAI_API_KEY="your-openai-api-key"
+
+# For Google:
+export GOOGLE_API_KEY="your-google-api-key"
+```
+
+**Run evaluation:**
 ```bash
 cd evaluate/generate_judgements
 ./run_gpt4o.sh  # or run_gemini25flash.sh, run_qwen3.sh
@@ -149,6 +160,7 @@ We provide sample judgement files in `evaluate/generate_judgements/outputs/`. To
 cd evaluate/compute_scores
 
 # Evaluate a single task
+# task can be image, edit, interleaved, reasoning
 python compute_accuracy.py --task image \
     --predictions ../generate_judgements/outputs/sample_task1_image.json
 

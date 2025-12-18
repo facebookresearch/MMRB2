@@ -2,7 +2,8 @@
 
 # Deep learning
 torch>=2.8.0
-transformers>=4.55.0
+transformers>=4.57.1
+torchvision>=0.23.0
 
 # API clients
 openai>=1.98.0

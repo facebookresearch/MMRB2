@@ -171,13 +171,9 @@ class Gemini(BaseAPI):
                 for part in candidate.content.parts:
                     if hasattr(part, "text") and part.text is not None:
                         interleaved_content.append(["text", part.text])
-                    elif (
-                        hasattr(part, "inline_data")
-                        and part.inline_data is not None
-                    ):
+                    elif hasattr(part, "inline_data") and part.inline_data is not None:
                         image_bytes = part.inline_data.data
                         image = Image.open(BytesIO(image_bytes))
                         interleaved_content.append(["image", image])
 
         return interleaved_content
-

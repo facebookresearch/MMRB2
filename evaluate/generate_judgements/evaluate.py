@@ -20,15 +20,13 @@ from tqdm import tqdm
 from evaluator_apis.base import BasePairwiseEvaluator
 
 
-def fix_relative_path(
-    content: List[List[str]], base_dir: str
-) -> List[List[str]]:
+def fix_relative_path(content: List[List[str]], base_dir: str) -> List[List[str]]:
     """Fix relative paths in content by prepending base_dir.
-    
+
     Args:
         content: List of [type, content] pairs.
         base_dir: Base directory to prepend to relative paths.
-        
+
     Returns:
         Content with fixed paths.
     """
@@ -93,9 +91,7 @@ def process_pairs_with_evaluator(
 
     # Verify it's a pairwise evaluator
     if not isinstance(evaluator, BasePairwiseEvaluator):
-        raise ValueError(
-            f"Evaluator {evaluator_name} is not a pairwise evaluator"
-        )
+        raise ValueError(f"Evaluator {evaluator_name} is not a pairwise evaluator")
 
     # Load the pairs
     print(f"Loading pairs from {pairs_path}...")
@@ -261,4 +257,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

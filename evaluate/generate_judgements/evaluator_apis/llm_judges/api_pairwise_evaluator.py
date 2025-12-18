@@ -21,7 +21,7 @@ from .evaluation_prompts import (
 
 class APIPairwiseEvaluator(BasePairwiseEvaluator):
     """Pairwise evaluator using API-based models (OpenAI, Google)."""
-    
+
     AVAILABLE_MODELS = {
         "gpt-4o": "gpt-4o",
         "gemini-2.5-flash": "gemini-2.5-flash",
@@ -67,7 +67,7 @@ class APIPairwiseEvaluator(BasePairwiseEvaluator):
         # Remove markdown code block formatting
         text = re.sub(r"^```(?:json)?\s*\n?", "", text.strip())
         text = re.sub(r"\n?```\s*$", "", text.strip())
-        
+
         try:
             return json_repair.loads(text)
         except json.JSONDecodeError as e:
@@ -129,12 +129,13 @@ class APIPairwiseEvaluator(BasePairwiseEvaluator):
 
 class GPT4oPairwiseEvaluator(APIPairwiseEvaluator):
     """GPT-4o based pairwise evaluator."""
+
     def __init__(self, device_id: int = None):
         super().__init__(model_name="gpt-4o", device_id=device_id)
 
 
 class Gemini25FlashPairwiseEvaluator(APIPairwiseEvaluator):
     """Gemini 2.5 Flash based pairwise evaluator."""
+
     def __init__(self, device_id: int = None):
         super().__init__(model_name="gemini-2.5-flash", device_id=device_id)
-

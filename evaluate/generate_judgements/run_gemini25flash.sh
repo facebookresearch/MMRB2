@@ -10,14 +10,14 @@ cd "$SCRIPT_DIR"
 export PYTHONPATH="$SCRIPT_DIR:$PYTHONPATH"
 
 # Data paths
-BASE_DATA_PATH="${MMRB2_DATA_PATH:-/checkpoint/dream/yushihu/MMRB2/benchmark}"
+BASE_DATA_PATH="${MMRB2_DATA_PATH:-$SCRIPT_DIR/../../benchmark}"
 OUTPUT_DIR="$SCRIPT_DIR/outputs"
 
 # Evaluator
 EVALUATOR="gemini25flash-pairwise"
 
 # Number of parallel workers (API-based)
-N_GPU=8
+N_GPU=32
 
 # Create output directory
 mkdir -p "$OUTPUT_DIR"

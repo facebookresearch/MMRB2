@@ -10,11 +10,13 @@ from .llm_judges import (
 
 class EvaluatorTypes:
     """Types of evaluators."""
+
     PAIRWISE = "pairwise"
 
 
 class EvaluatorCapabilities:
     """Task types that evaluators can handle."""
+
     IMAGE = "image"
     TEXT = "text"
     EDIT = "edit"
@@ -67,20 +69,22 @@ def get_evaluator_by_name(
     name: str, task_type: str = None, device_id: int = None
 ) -> BasePairwiseEvaluator:
     """Get an evaluator instance by name.
-    
+
     Args:
         name: Name of the evaluator (e.g., "gpt41-pairwise").
         task_type: Task type to validate against evaluator capabilities.
         device_id: GPU device ID for local models.
-        
+
     Returns:
         An instance of the requested evaluator.
-        
+
     Raises:
         ValueError: If evaluator not found or task type not supported.
     """
     if name not in EVALUATORS:
-        raise ValueError(f"Evaluator {name} not found. Available: {list(EVALUATORS.keys())}")
+        raise ValueError(
+            f"Evaluator {name} not found. Available: {list(EVALUATORS.keys())}"
+        )
 
     evaluator_capabilities = EVALUATORS[name]["capabilities"]
     if len(evaluator_capabilities) != 1 and task_type is None:
@@ -103,4 +107,3 @@ def get_evaluator_by_name(
     evaluator = EVALUATORS[name]["class"](device_id)
     if isinstance(evaluator, BasePairwiseEvaluator):
         return evaluator
-

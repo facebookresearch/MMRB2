@@ -1,35 +1,32 @@
 """OpenAI API utility functions."""
 
 import base64
-from io import BytesIO
+import os
 from pathlib import Path
 from time import sleep
 from typing import Dict, List
 
-from PIL import Image
-from openai import AzureOpenAI
+from openai import OpenAI
 
 
 class OpenAIClient:
-    """Client for OpenAI API calls via Azure."""
-    
-    def __init__(self, model_name: str, azure_endpoint: str, api_key: str):
+    """Client for OpenAI API calls."""
+
+    def __init__(self, model_name: str, api_key: str = None):
         """Initialize the OpenAI client.
-        
+
         Args:
             model_name: Name of the model to use.
-            azure_endpoint: Azure OpenAI endpoint URL.
-            api_key: API key for authentication.
+            api_key: API key for authentication. If not provided, reads from OPENAI_API_KEY env var.
         """
-        # Ensure azure_endpoint has https:// prefix
-        if not azure_endpoint.startswith(("http://", "https://")):
-            azure_endpoint = f"https://{azure_endpoint}"
+        if api_key is None:
+            api_key = os.environ.get("OPENAI_API_KEY")
+            if not api_key:
+                raise ValueError(
+                    "OpenAI API key not found. Please set OPENAI_API_KEY environment variable."
+                )
 
-        self.client = AzureOpenAI(
-            azure_endpoint=azure_endpoint,
-            api_key=api_key,
-            api_version="2025-04-01-preview",
-        )
+        self.client = OpenAI(api_key=api_key)
         self.model_name = model_name
 
     def encode_image_base64(self, image_path: str) -> str:
@@ -72,11 +69,6 @@ class OpenAIClient:
 
                 print(f"Error in attempt {attempt + 1}: {error_type}: {error_msg}")
 
-                if "Connection" in error_type or "Connect" in error_type:
-                    print("  - This appears to be a network connectivity issue")
-                    print(f"  - Check your Azure endpoint")
-                    print("  - Verify your API key is valid")
-
                 if attempt == max_retries - 1:
                     raise ValueError(
                         f"Failed to complete chat after {max_retries} attempts. "
@@ -96,4 +88,3 @@ class OpenAIClient:
         messages = [{"role": "user", "content": parts}]
         resp = self.chat_with_retry(messages, n, max_retries, **kwargs)
         return [resp.choices[i].message.content for i in range(n)]
-

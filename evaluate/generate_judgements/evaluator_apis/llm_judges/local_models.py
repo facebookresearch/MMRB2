@@ -3,14 +3,13 @@
 from typing import List, Optional
 
 import torch
-import torch._dynamo
 from PIL import Image
 from transformers import pipeline
 
 
 class LocalModelManager:
     """Manager for loading and running local VLM models."""
-    
+
     MODEL_CONFIGS = {
         "qwen3-vl-8b": {
             "huggingface_id": "Qwen/Qwen3-VL-8B-Instruct",
@@ -23,7 +22,7 @@ class LocalModelManager:
         device_id: Optional[int] = None,
     ):
         """Initialize the local model manager.
-        
+
         Args:
             model_name: Name of the model to load.
             device_id: GPU device ID to use. If None, uses CUDA if available.
@@ -60,11 +59,6 @@ class LocalModelManager:
                 dtype=torch.bfloat16,
             )
 
-        # Stabilize Gemma-3 decoding
-        if self.model_name.startswith("gemma-3"):
-            self.pipe.model.generation_config.cache_implementation = "static"
-            torch._inductor.config.triton.cudagraph_skip_dynamic_graphs = True
-
     def generate_response(
         self,
         prompt: List[List[str]],
@@ -72,12 +66,12 @@ class LocalModelManager:
         temperature: float = 1.0,
     ) -> str:
         """Generate a response from the model.
-        
+
         Args:
             prompt: List of [type, content] pairs where type is "text" or "image".
             max_new_tokens: Maximum number of tokens to generate.
             temperature: Sampling temperature.
-            
+
         Returns:
             Generated text response.
         """
@@ -97,9 +91,7 @@ class LocalModelManager:
             if segment[0] == "text":
                 user_content.append({"type": "text", "text": segment[1]})
             elif segment[0] == "image":
-                user_content.append(
-                    {"type": "image", "image": Image.open(segment[1])}
-                )
+                user_content.append({"type": "image", "image": Image.open(segment[1])})
 
         messages.append({"role": "user", "content": user_content})
 
@@ -112,4 +104,3 @@ class LocalModelManager:
         )
 
         return response[0]["generated_text"]
-

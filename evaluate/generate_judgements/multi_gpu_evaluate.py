@@ -83,11 +83,15 @@ def merge_results(partial_result_paths: List[str], final_output_path: str):
     if output_dir:
         os.makedirs(output_dir, exist_ok=True)
 
-    print(f"Saving merged results ({len(merged_results)} total) to {final_output_path}...")
+    print(
+        f"Saving merged results ({len(merged_results)} total) to {final_output_path}..."
+    )
     with open(final_output_path, "w") as f:
         json.dump(merged_results, f, indent=2)
 
-    print(f"Done! Merged {len(merged_results)} pairs from {len(partial_result_paths)} workers")
+    print(
+        f"Done! Merged {len(merged_results)} pairs from {len(partial_result_paths)} workers"
+    )
     return merged_results
 
 
@@ -306,4 +310,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

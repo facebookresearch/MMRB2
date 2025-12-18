@@ -18,7 +18,7 @@ from .local_models import LocalModelManager
 
 class LocalPairwiseEvaluator(BasePairwiseEvaluator):
     """Pairwise evaluator using local VLM models."""
-    
+
     def __init__(self, model_name: str, device_id: int = None):
         self.model_name = model_name
         self.device_id = device_id
@@ -107,6 +107,6 @@ class LocalPairwiseEvaluator(BasePairwiseEvaluator):
 
 class Qwen3VL8BPairwiseEvaluator(LocalPairwiseEvaluator):
     """Qwen3-VL-8B based pairwise evaluator."""
+
     def __init__(self, device_id: int = None):
         super().__init__(model_name="qwen3-vl-8b", device_id=device_id)
-

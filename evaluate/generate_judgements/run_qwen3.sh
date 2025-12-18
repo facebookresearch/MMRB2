@@ -10,14 +10,14 @@ cd "$SCRIPT_DIR"
 export PYTHONPATH="$SCRIPT_DIR:$PYTHONPATH"
 
 # Data paths
-BASE_DATA_PATH="${MMRB2_DATA_PATH:-/checkpoint/dream/yushihu/MMRB2/benchmark}"
+BASE_DATA_PATH="${MMRB2_DATA_PATH:-$SCRIPT_DIR/../../benchmark}"
 OUTPUT_DIR="$SCRIPT_DIR/outputs"
 
 # Evaluator
 EVALUATOR="qwen3vl8b-pairwise"
 
-# Number of GPUs to use
-N_GPU=8
+# Number of GPUs to use. Use N_GPU=8 for a node with 8 GPUs.
+N_GPU=1
 
 # Create output directory
 mkdir -p "$OUTPUT_DIR"

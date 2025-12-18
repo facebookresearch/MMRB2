@@ -61,7 +61,7 @@ download_images() {
     echo "Downloading Images from HuggingFace"
     echo "========================================"
     
-    python3 0_download_images.py \
+    python3 1_download_images.py \
         --output_dir "." \
         --repo "$HF_IMAGE_REPO"
     

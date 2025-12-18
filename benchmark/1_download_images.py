@@ -8,8 +8,8 @@ Prerequisites:
     pip install huggingface_hub
 
 Usage:
-    python 0_download_images.py
-    python 0_download_images.py --output_dir /path/to/release
+    python 1_download_images.py
+    python 1_download_images.py --output_dir /path/to/release
 """
 
 import argparse
