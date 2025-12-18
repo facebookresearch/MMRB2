@@ -109,7 +109,9 @@ Each task JSON file contains pairs with the following structure:
 
 ### Part 1: Generate Judgements (Optional)
 
-Generate pairwise judgements using any reward models. We provide example implementations of multimodal LLM judges for GPT-4o, Gemini 2.5 Flash, and Qwen3-VL-8B, but you can easily add your own model. See [`evaluate/README.md`](evaluate/README.md) for detailed setup and instructions on adding custom models.
+**You can evaluate any reward models, and save their predictions in the same format as sample judgement files in `evaluate/generate_judgements/outputs/`.**
+
+Here we provide example implementations of multimodal LLM judges for GPT-4o, Gemini 2.5 Flash, and Qwen3-VL-8B, and you can easily add other LLMs. See [`evaluate/README.md`](evaluate/README.md) for detailed setup and instructions on adding custom models. Note that the reward model is not limited to LLM judges.
 
 ```bash
 cd evaluate/generate_judgements
@@ -136,6 +138,19 @@ python compute_accuracy.py --task all \
 ```
 
 Example output:
+```
+==================================================
+SUMMARY
+==================================================
+Task                      Accuracy     Missing
+--------------------------------------------------
+task1_image                53.20%      0
+task2_edit                 55.50%      0
+task3_interleaved          57.50%      0
+task4_reasoning            47.50%      0
+--------------------------------------------------
+Overall                    53.42%
+==================================================
 ```
 
 ## 🤝 Contributing
