@@ -21,7 +21,7 @@ evaluate/
 
 ## Part 1: Generate Judgements
 
-Generate pairwise judgements using LLM-based evaluators. We provide example implementations for a few models, but you can easily add your own.
+Generate pairwise judgements using any reward models. We provide example implementations for a few multimodal LLM-as-a-judge, but you can easily add your own LLM as the base model for judges.
 
 ### Example Evaluators
 
