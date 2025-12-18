@@ -33,6 +33,19 @@ Note that you don't necessarily need an LLM-as-a-judge, you can also use any oth
 | `gemini25flash-pairwise` | API | Gemini 2.5 Flash |
 | `qwen3vl8b-pairwise` | Local | Qwen3-VL-8B (requires GPU) |
 
+### Requirements
+
+```
+torch>=2.8.0
+transformers>=4.55.0
+openai>=1.98.0
+google-generativeai>=0.3.0
+google-genai>=1.28.0
+json-repair
+tqdm
+Pillow
+```
+
 ### Setup
 
 1. **Set up API keys:**
@@ -173,15 +186,7 @@ class YourLocalModelPairwiseEvaluator(LocalPairwiseEvaluator):
 
 #### Output Format
 
-Your evaluator must return judgements in this JSON format:
-
-```json
-{
-  "better_response": "A" or "B",
-  "reasoning": "...",  // optional
-  ...  // any other metadata
-}
-```
+see the sample output files under generate_judgements/outputs/
 
 ---
 
@@ -232,15 +237,4 @@ Overall                    53.42%
 
 ---
 
-## Requirements
 
-```
-torch>=2.8.0
-transformers>=4.55.0
-openai>=1.98.0
-google-generativeai>=0.3.0
-google-genai>=1.28.0
-json-repair
-tqdm
-Pillow
-```
