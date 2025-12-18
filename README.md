@@ -109,10 +109,9 @@ Each task JSON file contains pairs with the following structure:
 
 ### Part 1: Generate Judgements (Optional)
 
-**You can evaluate any reward models, and save their predictions in the same format as sample judgement files in `evaluate/generate_judgements/outputs/`.**
+**You can evaluate any reward models by save their predictions in the same format as sample judgement files in `evaluate/generate_judgements/outputs/`, and see step 2**
 
-Here we provide example implementations of multimodal LLM judges for GPT-4o, Gemini 2.5 Flash, and Qwen3-VL-8B, and you can easily add other LLMs. See [`evaluate/README.md`](evaluate/README.md) for detailed setup and instructions on adding custom models. Note that the reward model is not limited to LLM judges.
-
+Here we also provide example implementations of multimodal LLM judges for GPT-4o, Gemini 2.5 Flash, and Qwen3-VL-8B, and you can easily add other LLMs. See [`evaluate/README.md`](evaluate/README.md) for detailed setup and instructions on adding custom models. Note that the reward model is not limited to LLM judges. You can skip this part if you implemented your own.
 ```bash
 cd evaluate/generate_judgements
 ./run_gpt4o.sh  # or run_gemini25flash.sh, run_qwen3.sh
