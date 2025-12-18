@@ -109,7 +109,7 @@ Each task JSON file contains pairs with the following structure:
 
 ### Part 1: Generate Judgements (Optional)
 
-Generate pairwise judgements using LLM judges. We provide example implementations for GPT-4o, Gemini 2.5 Flash, and Qwen3-VL-8B, but you can easily add your own model. See [`evaluate/README.md`](evaluate/README.md) for detailed setup and instructions on adding custom models.
+Generate pairwise judgements using any reward models. We provide example implementations of multimodal LLM judges for GPT-4o, Gemini 2.5 Flash, and Qwen3-VL-8B, but you can easily add your own model. See [`evaluate/README.md`](evaluate/README.md) for detailed setup and instructions on adding custom models.
 
 ```bash
 cd evaluate/generate_judgements
