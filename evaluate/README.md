@@ -235,10 +235,11 @@ Overall                    53.42%
 ## Requirements
 
 ```
-torch
-transformers
-openai
-google-genai
+torch>=2.8.0
+transformers>=4.55.0
+openai>=1.98.0
+google-generativeai>=0.3.0
+google-genai>=1.28.0
 json-repair
 tqdm
 Pillow
