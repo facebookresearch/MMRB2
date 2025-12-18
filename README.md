@@ -4,8 +4,21 @@
 
 [Yushi Hu*](https://yushi-hu.github.io/), [Reyhane Askari-Hemmat*](https://reyhaneaskari.github.io/), [Melissa Hall](https://ai.meta.com/people/440919051691552/melissa-hall/), [Emily Dinan](https://ai.meta.com/people/767581351981566/emily-dinan/), [Luke Zettlemoyer](https://homes.cs.washington.edu/~lsz/), [Marjan Ghazvininejad](https://www.linkedin.com/in/marjan-ghazvininejad/)
 
-Reward models (RMs) are essential for training large language models (LLMs), but remain underexplored for omni models that handle interleaved image and text sequences. We introduce **Multimodal RewardBench 2 (MMRB2)**, the first comprehensive benchmark for reward models on multimodal understanding and (interleaved) generation. MMRB2 spans four tasks: text-to-image, image editing, interleaved generation, and multimodal reasoning ("thinking-with-images"), providing 1,000 expert-annotated preference pairs per task from 23 models and agents across 21 source tasks. MMRB2 is designed with: (1) practical but challenging prompts; (2) responses from state-of-the-art models and agents; and (3) preference pairs with strong human-expert consensus, curated via an ensemble filtering strategy. Using MMRB2, we study existing judges for each subtask, including multimodal LLM-as-a-judge and models trained with human preferences. The latest Gemini 3 Pro attains 75-80% accuracy. GPT-5 and Gemini 2.5 Pro reach 66-75% accuracy, compared to >90% for humans, yet surpass the widely used GPT-4o (59%). The best performing open-source model Qwen3-VL-32B achieves similar accuracies as Gemini 2.5 Flash (64%). We also show that MMRB2 performance strongly correlates with downstream task success using Best-of-N sampling and conduct an in-depth analysis that shows key areas to improve the reward models going forward.
+Reward models (RMs) are essential for training large language models (LLMs), but remain underexplored for omni models that handle interleaved image and text sequences. We introduce **Multimodal RewardBench 2 (MMRB2)**, the first comprehensive benchmark for reward models on multimodal understanding and (interleaved) generation. MMRB2 spans four tasks: text-to-image, image editing, interleaved generation, and multimodal reasoning ("thinking-with-images"), providing 1,000 expert-annotated preference pairs per task from 23 models and agents across 21 source tasks. MMRB2 is designed with: (1) practical but challenging prompts; (2) responses from state-of-the-art models and agents; and (3) preference pairs with strong human-expert consensus, curated via an ensemble filtering strategy. 
 
+<p align="center">
+  <img src="assets/fig-1.pdf" alt="Examples of MMRB2" width="80%">
+  <br>
+  <em>Examples of MMRB2</em>
+</p>
+
+Using MMRB2, we study existing judges for each subtask, including multimodal LLM-as-a-judge and models trained with human preferences. The latest Gemini 3 Pro attains 75-80% accuracy. GPT-5 and Gemini 2.5 Pro reach 66-75% accuracy, compared to >90% for humans, yet surpass the widely used GPT-4o (59%). The best performing open-source model Qwen3-VL-32B achieves similar accuracies as Gemini 2.5 Flash (64%). We also show that MMRB2 performance strongly correlates with downstream task success using Best-of-N sampling and conduct an in-depth analysis that shows key areas to improve the reward models going forward.
+
+<p align="center">
+  <img src="assets/fig3.pdf" alt="Benchmark Curation Pipeline" width="100%">
+  <br>
+  <em>Benchmark curation pipeline</em>
+</p>
 
 ## 📋 Overview
 
@@ -15,6 +28,17 @@ This repo provides the data and evaluation codes for MMRB2:
 - **Diverse Sources**: Curated practical but challenging task prompts aggregated from 20+ benchmark datasets, and newly created ones
 - **Human Annotations**: High-quality preference labels indicating which model output is better
 - **Standardized Evaluation**: Positional-consistent evaluation protocol
+
+<p align="center">
+  <img src="assets/fig2_v3.pdf" alt="Breakdown of MMRB2" width="100%">
+  <br>
+  <em>Breakdown of MMRB2 by task type and source, and detailed categories under each task</em>
+</p>
+
+
+
+
+
 
 ## 🏗️ Repository Structure
 
@@ -151,6 +175,40 @@ task4_reasoning            47.50%      0
 Overall                    53.42%
 ==================================================
 ```
+
+## Model Performance Results
+
+| Judge | Text-to-Image | Image Editing | Interleaved | Reasoning | Avg. |
+|-------|--------------|---------------|----------------------|---------------------|------|
+| **Open-source multimodal LLM-as-a-judges**  |
+| Gemma 3 4B | 51.7 | 51.0 | 51.3 | 48.8 | 50.7 |
+| Gemma 3 12B | 56.0 | 58.0 | 58.0 | 49.3 | 55.3 |
+| Gemma 3 27B | 58.3 | 60.2 | 61.1 | 49.4 | 57.3 |
+| Qwen2.5-VL-7B | 50.4 | 57.1 | 48.4 | 47.5 | 50.9 |
+| Qwen2.5-VL-72B | 59.1 | 64.6 | 62.3 | 50.0 | 59.0 |
+| Qwen3-VL-8B | 59.4 | 61.7 | 61.5 | 54.6 | 59.3 |
+| Qwen3-VL-32B | 64.1 | 67.3 | 70.5 | 56.6 | 64.6 |
+| Qwen3-VL-30BA3B | 60.0 | 59.5 | 57.3 | 57.3 | 58.5 |
+| Qwen3-VL-235BA22B | 62.0 | 64.8 | 69.0 | 55.9 | 62.9 |
+| **Other open reward models**  |
+| CLIPScore | 51.0 | - | - | - | - |
+| ImageReward | 54.0 | - | - | - | - |
+| HPSv2 | 54.7 | - | - | - | - |
+| VQAScore (Qwen2.5-VL-7B) | 58.3 | - | - | - | - |
+| PickScore | 58.6 | - | - | - | - |
+| HPSv3 | 60.2 | - | - | - | - |
+| EditReward | - | 67.2\* | - | - | - |
+| UnifiedReward | 59.8 | - | - | - | 55.1\* |
+| **API-based models** |
+| GPT-4o | 60.3 | 65.0 | 61.5 | 51.9 | 59.7 |
+| GPT-4.1 | 65.8 | 68.2 | 67.0 | 53.0 | 63.5 |
+| GPT-5 | **70.5** | **73.8** | **74.4** | **70.2** | **72.2** |
+| Gemini 2.5 Flash | 63.1 | 66.5 | 69.4 | 57.5 | 64.1 |
+| Gemini 2.5 Pro | **70.5** | 71.3 | **75.1** | 66.6 | **70.9** |
+| Gemini 3 Pro | **74.4** | **74.9** | **76.4** | **79.5** | **76.3** |
+
+
+**Note:** Bold values indicate the highest scores in each category. Numbers with \* are evaluated on the single-image subset of corresponding task.
 
 ## 🤝 Contributing
 
