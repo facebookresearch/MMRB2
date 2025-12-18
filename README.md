@@ -25,7 +25,9 @@ MMRB2/
 │   ├── *_response_only.json  # Response data (prompts downloaded at build time)
 │   ├── run_release.sh   # Main build script
 │   └── ...
-├── evaluate/            # Evaluation scripts (coming soon)
+├── evaluate/            # Evaluation scripts
+│   ├── generate_judgements/  # Part 1: Generate judgements using LLM judges
+│   └── compute_scores/       # Part 2: Compute accuracy from judgement files
 ├── requirements.txt     # Python dependencies
 ├── LICENSE              # CC BY-NC 4.0 License
 ├── CODE_OF_CONDUCT.md   # Community guidelines
@@ -103,18 +105,38 @@ Each task JSON file contains pairs with the following structure:
 }
 ```
 
-## 🔗 Data Sources
+## 📈 Evaluation
 
-MMRB2 aggregates prompts from the following benchmarks:
+### Part 1: Generate Judgements (Optional)
 
-**T2I**: OneIG-Bench, R2I-Bench, WISE, EvalMuse, RealUnify-UEG
+Generate pairwise judgements using LLM judges. We provide example implementations for GPT-4o, Gemini 2.5 Flash, and Qwen3-VL-8B, but you can easily add your own model. See [`evaluate/README.md`](evaluate/README.md) for detailed setup and instructions on adding custom models.
 
-**Edit**: Emu-Edit, RISEBench, HQ-Edit, DreamBench, DreamBooth, and newly created multi-image editing, and text-heavy editing
+```bash
+cd evaluate/generate_judgements
+./run_gpt4o.sh  # or run_gemini25flash.sh, run_qwen3.sh
+```
 
-**Interleaved**: ISG-Bench, Chameleon, InterleavedEval, MMMG
+### Part 2: Compute Accuracy
 
-**Reasoning**: BLINK, MindCube, MuirBench, RealUnify, VisuLogic, V*
+We provide sample judgement files in `evaluate/generate_judgements/outputs/`. To compute accuracy:
 
+```bash
+cd evaluate/compute_scores
+
+# Evaluate a single task
+python compute_accuracy.py --task image \
+    --predictions ../generate_judgements/outputs/sample_task1_image.json
+
+# Evaluate all 4 tasks
+python compute_accuracy.py --task all \
+    --predictions ../generate_judgements/outputs/sample_task1_image.json \
+                  ../generate_judgements/outputs/sample_task2_edit.json \
+                  ../generate_judgements/outputs/sample_task3_interleaved.json \
+                  ../generate_judgements/outputs/sample_task4_reasoning.json
+```
+
+Example output:
+```
 
 ## 🤝 Contributing
 
