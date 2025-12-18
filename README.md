@@ -137,32 +137,6 @@ python compute_accuracy.py --task all \
 
 Example output:
 ```
-==================================================
-SUMMARY
-==================================================
-Task                      Accuracy     Missing
---------------------------------------------------
-task1_image                69.80%      0
-task2_edit                 70.05%      0
-task3_interleaved          71.35%      0
-task4_reasoning            70.60%      0
---------------------------------------------------
-Overall                    70.45%
-==================================================
-```
-
-## 🔗 Data Sources
-
-MMRB2 aggregates prompts from the following benchmarks:
-
-**T2I**: OneIG-Bench, R2I-Bench, WISE, EvalMuse, RealUnify-UEG
-
-**Edit**: Emu-Edit, RISEBench, HQ-Edit, DreamBench, DreamBooth, and newly created multi-image editing, and text-heavy editing
-
-**Interleaved**: ISG-Bench, Chameleon, InterleavedEval, MMMG
-
-**Reasoning**: BLINK, MindCube, MuirBench, RealUnify, VisuLogic, V*
-
 
 ## 🤝 Contributing
 

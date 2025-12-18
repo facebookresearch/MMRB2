@@ -19,6 +19,7 @@ Data structure:
 import json
 import os
 import shutil
+import zipfile
 from typing import Any, Dict
 
 from huggingface_hub import hf_hub_download, list_repo_files
@@ -78,6 +79,18 @@ def download(data_dir: str, force: bool = False) -> str:
 
         if not os.path.exists(dst_path):
             shutil.copy(img_hf, dst_path)
+
+    # Extract any zip files
+    print(f"[{SOURCE_NAME}] Extracting zip files...")
+    for filename in os.listdir(images_dir):
+        if filename.endswith(".zip"):
+            zip_path = os.path.join(images_dir, filename)
+            # Extract to images_dir (creates subdirectory with zip name minus .zip)
+            extract_dir = os.path.join(images_dir, filename[:-4])
+            if not os.path.exists(extract_dir):
+                print(f"[{SOURCE_NAME}] Extracting {filename}...")
+                with zipfile.ZipFile(zip_path, "r") as zf:
+                    zf.extractall(images_dir)
 
     print(f"[{SOURCE_NAME}] Downloaded images to {images_dir}")
     return source_dir
