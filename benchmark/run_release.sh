@@ -61,7 +61,7 @@ download_images() {
     echo "Downloading Images from HuggingFace"
     echo "========================================"
     
-    python3 1_download_images.py \
+    python 1_download_images.py \
         --output_dir "." \
         --repo "$HF_IMAGE_REPO"
     
@@ -79,7 +79,7 @@ run_t2i() {
         exit 1
     fi
     
-    python3 2_download_and_merge.py \
+    python 2_download_and_merge.py \
         --input "t2i_response_only.json" \
         --output "t2i_full.json" \
         --data_dir "$SOURCES_DIR" \
@@ -101,7 +101,7 @@ run_edit() {
     fi
     
     # Step 1: Download and merge standard edit sources
-    python3 2_download_and_merge.py \
+    python 2_download_and_merge.py \
         --input "edit_response_only.json" \
         --output "edit_full.json" \
         --data_dir "$SOURCES_DIR" \
@@ -112,7 +112,7 @@ run_edit() {
     if [ -f "new_task_release.json" ]; then
         echo ""
         echo "Processing new edit prompts..."
-        python3 3_process_edit_prompts.py \
+        python 3_process_edit_prompts.py \
             --input "edit_full.json" \
             --prompts "new_task_release.json" \
             --output "edit_full.json" \
@@ -135,7 +135,7 @@ run_interleaved() {
         exit 1
     fi
     
-    python3 2_download_and_merge.py \
+    python 2_download_and_merge.py \
         --input "interleaved_response_only.json" \
         --output "interleaved_full.json" \
         --data_dir "$SOURCES_DIR" \
@@ -156,7 +156,7 @@ run_reasoning() {
         exit 1
     fi
     
-    python3 2_download_and_merge.py \
+    python 2_download_and_merge.py \
         --input "reasoning_response_only.json" \
         --output "reasoning_full.json" \
         --data_dir "$SOURCES_DIR" \
@@ -172,7 +172,7 @@ run_finalize() {
     echo "Finalizing Release"
     echo "========================================"
     
-    python3 4_finalize_release.py \
+    python 4_finalize_release.py \
         --release_dir "." \
         --input_images_dir "$INPUT_IMAGES_DIR"
     
