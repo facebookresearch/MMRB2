@@ -1,8 +1,15 @@
 # Multimodal RewardBench 2 (MMRB2)
 
+
+This repo contains data and evaluation codes for the paper [Multimodal RewardBench 2: Evaluating Omni Reward Models for Interleaved Text and Image](https://arxiv.org/abs/2512.16899).
+
+[[Paper]](https://arxiv.org/abs/2512.16899) [[Code & Data]](https://github.com/facebookresearch/MMRB2) [[HuggingFace Dataset]](https://huggingface.co/datasets/rl-research/multimodal-rewardbench-2)
+
 **[Meta FAIR](https://ai.meta.com/research/)**
 
+
 [Yushi Hu*](https://yushi-hu.github.io/), [Reyhane Askari-Hemmat*](https://reyhaneaskari.github.io/), [Melissa Hall](https://ai.meta.com/people/440919051691552/melissa-hall/), [Emily Dinan](https://ai.meta.com/people/767581351981566/emily-dinan/), [Luke Zettlemoyer](https://homes.cs.washington.edu/~lsz/), [Marjan Ghazvininejad](https://www.linkedin.com/in/marjan-ghazvininejad/)
+
 
 Reward models (RMs) are essential for training large language models (LLMs), but remain underexplored for omni models that handle interleaved image and text sequences. We introduce **Multimodal RewardBench 2 (MMRB2)**, the first comprehensive benchmark for reward models on multimodal understanding and (interleaved) generation. MMRB2 spans four tasks: text-to-image, image editing, interleaved generation, and multimodal reasoning ("thinking-with-images"), providing 1,000 expert-annotated preference pairs per task from 23 models and agents across 21 source tasks. MMRB2 is designed with: (1) practical but challenging prompts; (2) responses from state-of-the-art models and agents; and (3) preference pairs with strong human-expert consensus, curated via an ensemble filtering strategy. 
 
@@ -47,7 +54,8 @@ MMRB2/
 ├── benchmark/           # Benchmark data and build scripts
 │   ├── sources/         # Source modules for downloading data
 │   ├── *_response_only.json  # Response data (prompts downloaded at build time)
-│   ├── run_release.sh   # Main build script
+│   ├── build_from_hf.py # Quick setup: download from HuggingFace
+│   ├── run_release.sh   # Build from original sources
 │   └── ...
 ├── evaluate/            # Evaluation scripts
 │   ├── generate_judgements/  # Part 1: Generate judgements using LLM judges
@@ -74,7 +82,21 @@ pip install -r requirements.txt
 
 ### Building the Benchmark
 
-The benchmark data requires downloading prompts from original sources and images from HuggingFace:
+#### Option 1: Quick Setup from HuggingFace (Recommended)
+
+Thanks to [@RulinShao](https://github.com/RulinShao) for help processing and hosting the dataset on HuggingFace!
+The easiest way to get started is to download the complete benchmark directly from HuggingFace:
+
+```bash
+cd benchmark
+python build_from_hf.py --output-dir .
+```
+
+This will download all 4 task subsets (t2i, edit, interleaved, reasoning) and create the JSON files and image folders automatically. 
+
+#### Option 2: Build from Original Sources
+
+Alternatively, you can build from original benchmark sources:
 
 ```bash
 cd benchmark
