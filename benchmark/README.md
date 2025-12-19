@@ -16,6 +16,7 @@ benchmark/
 ├── interleaved_response_only.json
 ├── reasoning_response_only.json
 ├── new_task_release.json      # Additional edit prompts
+├── build_from_hf.py           # Quick setup: download from HuggingFace
 ├── 0_download_images.py       # Download images from HuggingFace
 ├── 2_download_and_merge.py    # Download and merge prompts
 ├── 3_process_edit_prompts.py  # Process edit task prompts
@@ -24,6 +25,20 @@ benchmark/
 ```
 
 ## Building the Benchmark
+
+### Quick Setup from HuggingFace (Recommended)
+
+The easiest way to get the benchmark is to download directly from HuggingFace:
+
+```bash
+python build_from_hf.py --output-dir .
+```
+
+This downloads all 4 subsets and creates the complete benchmark with images. Thanks to [@RulinShao](https://github.com/RulinShao) for help processing and hosting the dataset on HuggingFace!
+
+### Build from Original Sources
+
+If you prefer to build from the original benchmark sources, follow the steps below.
 
 ### Prerequisites
 
