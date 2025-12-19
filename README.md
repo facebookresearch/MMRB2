@@ -3,7 +3,8 @@
 
 This repo contains data and evaluation codes for the paper [Multimodal RewardBench 2: Evaluating Omni Reward Models for Interleaved Text and Image](https://arxiv.org/abs/2512.16899).
 
-[[Paper]](https://arxiv.org/abs/2512.16899) [[Code & Data]](https://github.com/facebookresearch/MMRB2) [[HuggingFace Dataset]](https://huggingface.co/datasets/rl-research/multimodal-rewardbench-2)
+[**📑 Paper**](https://arxiv.org/abs/2512.16899) | [**💻 Code & data**](https://github.com/facebookresearch/MMRB2) | [**🤗 Dataset**](https://huggingface.co/datasets/rl-research/multimodal-rewardbench-2)
+
 
 **[Meta FAIR](https://ai.meta.com/research/)**
 
