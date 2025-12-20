@@ -245,6 +245,20 @@ Overall                    53.42%
 
 **Note:** Bold values indicate the highest scores in each category. Numbers with \* are evaluated on the single-image subset of corresponding task.
 
+## Citation
+
+If you found this benchmark useful, please cite with the following bibtex.
+
+**BibTeX:**
+```bibtex
+@article{fu2024blink,
+  title={BLINK: Multimodal Large Language Models Can See but Not Perceive},
+  author={Fu, Xingyu and Hu, Yushi and Li, Bangzheng and Feng, Yu and Wang, Haoyu and Lin, Xudong and Roth, Dan and Smith, Noah A and Ma, Wei-Chiu and Krishna, Ranjay},
+  journal={arXiv preprint arXiv:2404.12390},
+  year={2024}
+}
+```
+
 ## 🤝 Contributing
 
 We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
