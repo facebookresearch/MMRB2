@@ -13,13 +13,32 @@ import os
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 from PIL import Image
-from datasets import load_dataset
+from datasets import load_dataset, get_dataset_config_names
 import re
 from tqdm import tqdm
 
 
 # Subset configurations
 SUBSETS = ["t2i", "edit", "interleaved", "reasoning"]
+
+
+def get_available_configs(repo_id: str) -> List[str]:
+    """
+    Get the list of available configs in the HuggingFace dataset.
+    
+    Args:
+        repo_id: HuggingFace repository ID
+        
+    Returns:
+        List of available config names
+    """
+    try:
+        configs = get_dataset_config_names(repo_id)
+        # Filter to only return configs that match our expected SUBSETS
+        return [c for c in configs if c in SUBSETS]
+    except Exception as e:
+        print(f"Warning: Could not fetch config list from {repo_id}: {e}")
+        return []
 
 
 def extract_images_and_text(
@@ -287,11 +306,32 @@ def build_from_huggingface(
     (output_path / "images").mkdir(exist_ok=True)
     (output_path / "input_images").mkdir(exist_ok=True)
 
+    # Get available configs from HuggingFace
+    print(f"Checking available configs in {repo_id}...")
+    available_configs = get_available_configs(repo_id)
+    print(f"Available configs: {available_configs if available_configs else 'Could not determine'}")
+
     subsets_to_download = subsets or SUBSETS
+    
+    # Track results
+    successful = []
+    skipped = []
+    failed = []
 
     for subset in subsets_to_download:
         if subset not in SUBSETS:
             print(f"Warning: Unknown subset {subset}, skipping")
+            skipped.append(subset)
+            continue
+
+        # Check if config is available (if we were able to get the list)
+        if available_configs and subset not in available_configs:
+            print(f"\n{'='*60}")
+            print(f"Skipping subset: {subset}")
+            print(f"{'='*60}")
+            print(f"Config '{subset}' is not available in {repo_id}.")
+            print(f"Available configs: {available_configs}")
+            skipped.append(subset)
             continue
 
         try:
@@ -300,20 +340,29 @@ def build_from_huggingface(
                 image_format=image_format,
                 jpeg_quality=jpeg_quality
             )
+            successful.append(subset)
         except Exception as e:
             print(f"Error downloading {subset}: {e}")
+            failed.append(subset)
             continue
 
     print(f"\n{'='*60}")
     print("Build complete!")
     print(f"{'='*60}")
-    print(f"\nOutput files:")
-    print(f"  - {output_path}/t2i.json")
-    print(f"  - {output_path}/edit.json")
-    print(f"  - {output_path}/interleaved.json")
-    print(f"  - {output_path}/reasoning.json")
-    print(f"  - {output_path}/images/")
-    print(f"  - {output_path}/input_images/")
+    
+    if successful:
+        print(f"\n✓ Successfully downloaded: {successful}")
+        print(f"\nOutput files:")
+        for subset in successful:
+            print(f"  - {output_path}/{subset}.json")
+        print(f"  - {output_path}/images/")
+        print(f"  - {output_path}/input_images/")
+    
+    if skipped:
+        print(f"\n⚠ Skipped (not available in repo): {skipped}")
+    
+    if failed:
+        print(f"\n✗ Failed to download: {failed}")
 
 
 def main():
