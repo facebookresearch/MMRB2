@@ -29,6 +29,8 @@ def extract_images_and_text(
     output_dir: Path,
     pair_id: str,
     suffix: str,
+    image_format: str = "png",
+    jpeg_quality: int = 100,
 ) -> List[List[str]]:
     """
     Convert HuggingFace format (text with placeholders + images) back to
@@ -41,6 +43,8 @@ def extract_images_and_text(
         output_dir: Output directory
         pair_id: Pair ID for naming images
         suffix: Suffix for image filenames (e.g., "prompt", "a", "b")
+        image_format: Output image format ("png" for lossless, "jpg" for JPEG)
+        jpeg_quality: JPEG quality if using jpg format (1-100, default 100 for max quality)
 
     Returns:
         List of ["type", "content"] pairs
@@ -50,15 +54,31 @@ def extract_images_and_text(
     # Handle empty text case
     if not text and not images:
         return content
+    
+    # Determine file extension and save parameters
+    if image_format.lower() == "png":
+        ext = "png"
+        save_kwargs = {"format": "PNG"}
+    else:
+        ext = "jpg"
+        save_kwargs = {"format": "JPEG", "quality": jpeg_quality}
+
+    def save_image(img: Image.Image, filename: str) -> str:
+        """Save image and return relative path."""
+        img_path = output_dir / image_prefix / filename
+        img_path.parent.mkdir(parents=True, exist_ok=True)
+        # Convert to RGB for JPEG (PNG can handle RGBA)
+        if ext == "jpg" and img.mode in ("RGBA", "P"):
+            img = img.convert("RGB")
+        img.save(img_path, **save_kwargs)
+        return f"{image_prefix}/{filename}"
 
     if not text:
         # Only images, no text
         for i, img in enumerate(images):
-            img_filename = f"{pair_id}_{suffix}_{i}.jpg"
-            img_path = output_dir / image_prefix / img_filename
-            img_path.parent.mkdir(parents=True, exist_ok=True)
-            img.save(img_path, "JPEG", quality=95)
-            content.append(["image", f"{image_prefix}/{img_filename}"])
+            img_filename = f"{pair_id}_{suffix}_{i}.{ext}"
+            rel_path = save_image(img, img_filename)
+            content.append(["image", rel_path])
         return content
 
     # Find all image placeholders
@@ -77,21 +97,17 @@ def extract_images_and_text(
             # Image index
             if image_idx < len(images):
                 img = images[image_idx]
-                img_filename = f"{pair_id}_{suffix}_{image_idx}.jpg"
-                img_path = output_dir / image_prefix / img_filename
-                img_path.parent.mkdir(parents=True, exist_ok=True)
-                img.save(img_path, "JPEG", quality=95)
-                content.append(["image", f"{image_prefix}/{img_filename}"])
+                img_filename = f"{pair_id}_{suffix}_{image_idx}.{ext}"
+                rel_path = save_image(img, img_filename)
+                content.append(["image", rel_path])
                 image_idx += 1
 
     # If no placeholders found but we have images, append them at the end
     if not re.search(pattern, text) and images:
         for i, img in enumerate(images):
-            img_filename = f"{pair_id}_{suffix}_{i}.jpg"
-            img_path = output_dir / image_prefix / img_filename
-            img_path.parent.mkdir(parents=True, exist_ok=True)
-            img.save(img_path, "JPEG", quality=95)
-            content.append(["image", f"{image_prefix}/{img_filename}"])
+            img_filename = f"{pair_id}_{suffix}_{i}.{ext}"
+            rel_path = save_image(img, img_filename)
+            content.append(["image", rel_path])
 
     return content
 
@@ -99,6 +115,8 @@ def extract_images_and_text(
 def convert_hf_to_benchmark_format(
     row: Dict,
     output_dir: Path,
+    image_format: str = "png",
+    jpeg_quality: int = 100,
 ) -> Dict[str, Any]:
     """
     Convert a HuggingFace dataset row back to benchmark format.
@@ -106,6 +124,8 @@ def convert_hf_to_benchmark_format(
     Args:
         row: A row from the HuggingFace dataset
         output_dir: Output directory for saving images
+        image_format: Output image format ("png" for lossless, "jpg" for JPEG)
+        jpeg_quality: JPEG quality if using jpg format (1-100)
 
     Returns:
         Dictionary in benchmark format
@@ -120,6 +140,8 @@ def convert_hf_to_benchmark_format(
         output_dir,
         pair_id,
         "prompt",
+        image_format=image_format,
+        jpeg_quality=jpeg_quality,
     )
 
     # Convert response_a
@@ -130,6 +152,8 @@ def convert_hf_to_benchmark_format(
         output_dir,
         pair_id,
         "a",
+        image_format=image_format,
+        jpeg_quality=jpeg_quality,
     )
 
     # Convert response_b
@@ -140,6 +164,8 @@ def convert_hf_to_benchmark_format(
         output_dir,
         pair_id,
         "b",
+        image_format=image_format,
+        jpeg_quality=jpeg_quality,
     )
 
     # Normalize chosen
@@ -192,6 +218,8 @@ def download_and_build_subset(
     subset: str,
     repo_id: str,
     output_dir: Path,
+    image_format: str = "png",
+    jpeg_quality: int = 100,
 ) -> None:
     """
     Download a subset from HuggingFace and convert to benchmark format.
@@ -200,6 +228,8 @@ def download_and_build_subset(
         subset: Subset name (t2i, edit, interleaved, reasoning)
         repo_id: HuggingFace repository ID
         output_dir: Output directory
+        image_format: Output image format ("png" for lossless, "jpg" for JPEG)
+        jpeg_quality: JPEG quality if using jpg format (1-100)
     """
     print(f"\n{'='*60}")
     print(f"Downloading subset: {subset}")
@@ -209,12 +239,16 @@ def download_and_build_subset(
     print(f"Loading {subset} from {repo_id}...")
     dataset = load_dataset(repo_id, subset, split="test")
 
-    print(f"Converting {len(dataset)} pairs to benchmark format...")
+    print(f"Converting {len(dataset)} pairs to benchmark format (image_format={image_format})...")
 
     pairs = []
     for row in tqdm(dataset, desc=f"Processing {subset}"):
         try:
-            pair = convert_hf_to_benchmark_format(row, output_dir)
+            pair = convert_hf_to_benchmark_format(
+                row, output_dir, 
+                image_format=image_format, 
+                jpeg_quality=jpeg_quality
+            )
             pairs.append(pair)
         except Exception as e:
             print(f"Error processing {row.get('pair_id', 'unknown')}: {e}")
@@ -233,6 +267,8 @@ def build_from_huggingface(
     output_dir: str = ".",
     repo_id: str = "rl-research/multimodal-rewardbench-2",
     subsets: Optional[List[str]] = None,
+    image_format: str = "png",
+    jpeg_quality: int = 100,
 ):
     """
     Download and build all benchmark subsets from HuggingFace.
@@ -241,6 +277,8 @@ def build_from_huggingface(
         output_dir: Output directory for benchmark files
         repo_id: HuggingFace repository ID
         subsets: List of subsets to download (default: all)
+        image_format: Output image format ("png" for lossless, "jpg" for JPEG)
+        jpeg_quality: JPEG quality if using jpg format (1-100)
     """
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
@@ -257,7 +295,11 @@ def build_from_huggingface(
             continue
 
         try:
-            download_and_build_subset(subset, repo_id, output_path)
+            download_and_build_subset(
+                subset, repo_id, output_path,
+                image_format=image_format,
+                jpeg_quality=jpeg_quality
+            )
         except Exception as e:
             print(f"Error downloading {subset}: {e}")
             continue
@@ -299,6 +341,21 @@ def main():
         choices=SUBSETS,
         help="Download only specific subsets",
     )
+    # Image format options
+    parser.add_argument(
+        "--image-format",
+        type=str,
+        choices=["png", "jpg"],
+        default="png",
+        help="Output image format: 'png' (lossless, larger files) or 'jpg' (lossy, smaller). "
+             "Default: 'png' to avoid further quality loss since source images are already JPEG.",
+    )
+    parser.add_argument(
+        "--jpeg-quality",
+        type=int,
+        default=100,
+        help="JPEG quality if using --image-format=jpg (1-100, default: 100 for max quality)",
+    )
 
     args = parser.parse_args()
 
@@ -306,6 +363,8 @@ def main():
         output_dir=args.output_dir,
         repo_id=args.repo_id,
         subsets=args.subset,
+        image_format=args.image_format,
+        jpeg_quality=args.jpeg_quality,
     )
 
 
