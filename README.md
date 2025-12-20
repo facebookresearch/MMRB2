@@ -251,11 +251,11 @@ If you found this benchmark useful, please cite with the following bibtex.
 
 **BibTeX:**
 ```bibtex
-@article{fu2024blink,
-  title={BLINK: Multimodal Large Language Models Can See but Not Perceive},
-  author={Fu, Xingyu and Hu, Yushi and Li, Bangzheng and Feng, Yu and Wang, Haoyu and Lin, Xudong and Roth, Dan and Smith, Noah A and Ma, Wei-Chiu and Krishna, Ranjay},
-  journal={arXiv preprint arXiv:2404.12390},
-  year={2024}
+@article{hu2025multimodalrewardbench2,
+  title={Multimodal RewardBench 2: Evaluating Omni Reward Models for Interleaved Text and Image},
+  author={Hu, Yushi and Askari-Hemmat, Reyhane and Hall, Melissa and Dinan, Emily and Zettlemoyer, Luke and Ghazvininejad, Marjan},
+  journal={arXiv preprint arXiv:2512.16899},
+  year={2025}
 }
 ```
 
